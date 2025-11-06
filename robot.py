@@ -35,7 +35,11 @@ sensor.detectable_colors([Color.MAGENTA])
 #     cutie.stop()
 
 # right_motor.run_time(5000, 5000, wait=False)
+cutie.use_gyro(True)
+cutie.turn(90)
+cutie.straight(10000)
 
+wait(40000)
 def straight_time(speed, time):
     timer = StopWatch()
     last = cutie.settings()[0]
