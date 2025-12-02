@@ -130,27 +130,31 @@ def run1():
     cutie.settings(700)
     cutie.straight(1300)
     straight_time(300, 4000)
-    wait(1000)
-    left_motor.run_angle(-500, 60)
-    wait(1000)
-    left_motor.run_angle(500, 120)
-    wait(4000)
-    left_motor.run_angle(-500, 60)
+    wait(2000)
     cutie.settings(150)
-    cutie.straight(-2000)
+    cutie.straight(-500)
+    cutie.turn(90)
+    cutie.straight(-500)
 
 
 def run2():
     cutie.use_gyro(True)
     cutie.settings(80)
+    cutie.straight(700)
+    right_motor.run_time(-1000, 1000)
     cutie.straight(-600)
+
 
 
 def run3():
     cutie.straight(700)
     till_black(100, 0)
-    cutie.turn(80)
+    cutie.turn(57)
     cutie.straight(300)
+    right_motor.run_time(-5000, 1000)
+    cutie.straight(-300)
+    cutie.turn(33)
+    cutie.straight(200)
 
 
 # left_motor.run_time(-5000, 3000)
