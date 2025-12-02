@@ -6,12 +6,12 @@ from pybricks.tools import wait, StopWatch, hub_menu
 
 hub = PrimeHub()
 
-#CUTIE WHEELS
+# CUTIE WHEELS
 left_wheel = Motor(Port.A, Direction.COUNTERCLOCKWISE)
 right_wheel = Motor(Port.E, Direction.CLOCKWISE)
 
-left_motor = Motor(Port.B, gears=[20,28])
-right_motor = Motor(Port.F, gears=[20,28])
+left_motor = Motor(Port.B, gears=[20, 28])
+right_motor = Motor(Port.F, gears=[20, 28])
 
 sensor = ColorSensor(Port.C)
 sensor2 = ColorSensor(Port.D)
@@ -20,19 +20,14 @@ sensor2 = ColorSensor(Port.D)
 #         print(sensor2.reflection())
 
 
-
-cutie = DriveBase(left_wheel,right_wheel, 62.4, 80)
-color_list= [
-    Color(343, 82, 36), #red
-    Color(216,88,27),  #blue
-    Color(156, 72, 19), #green
-    Color(51, 75, 71), #yellow
+cutie = DriveBase(left_wheel, right_wheel, 62.4, 80)
+color_list = [
+    Color(343, 82, 36),  # red
+    Color(216, 88, 27),  # blue
+    Color(156, 72, 19),  # green
+    Color(51, 75, 71),  # yellow
 ]
-run_colors = (
-    Color.BLUE,
-    Color.GREEN,
-    Color.RED
-)
+run_colors = (Color.BLUE, Color.GREEN, Color.RED)
 sensor2.detectable_colors(color_list)
 
 # while("1 + 1 = 3"):
@@ -47,6 +42,7 @@ sensor2.detectable_colors(color_list)
 #         pass
 
 #     cutie.stop()
+
 
 # right_motor.run_time(5000, 5000, wait=False)
 def straight_time(speed, time):
@@ -63,6 +59,7 @@ def straight_time(speed, time):
 
     cutie.settings(last)
 
+
 def till_black(speed, turn_rate):
     cutie.drive(speed, turn_rate)
 
@@ -72,56 +69,60 @@ def till_black(speed, turn_rate):
 
     cutie.stop()
 
-def abs_turn(target):
-    distance = target - cutie.angle()
-    
-    cutie.turn(turnDeg)
 
-def turn_to(angle):
-    print(hub.imu.heading())
-    start_angle = (hub.imu.heading() + 360) % 360  # 208
-    print(start_angle)
-    deg_to_turn = (angle - start_angle) % 360  # 242
-    print(deg_to_turn)
+# def abs_turn(target):
+#     distance = target - cutie.angle()
 
-    if deg_to_turn >= 180:
-        chassis.turn(deg_to_turn - 360)
-    else:
-        chassis.turn(deg_to_turn)
+#     cutie.turn(turnDeg)
 
-def turn_to_angle(angle, speed=200, max_time=3):
-    """Turns to a specified absolute gyro angle"""
+# def turn_to(angle):
+#     print(hub.imu.heading())
+#     start_angle = (hub.imu.heading() + 360) % 360  # 208
+#     print(start_angle)
+#     deg_to_turn = (angle - start_angle) % 360  # 242
+#     print(deg_to_turn)
 
-    timer = StopWatch()
-    timer.reset()
+#     if deg_to_turn >= 180:
+#         chassis.turn(deg_to_turn - 360)
+#     else:
+#         chassis.turn(deg_to_turn)
 
-    distance = angle - hub.imu.heading()
-    robot_acceleration = wheels.settings()[3]
-    wheels.settings(turn_rate=speed)
-    wheels.turn(distance)
+# def turn_to_angle(angle, speed=200, max_time=3):
+#     """Turns to a specified absolute gyro angle"""
 
-    # while (timer.time()) < (max_time * 1000) and angle - hub.imu.heading() > 1:
-    #     ...
-    wheels.settings(turn_rate=robot_acceleration)
+#     timer = StopWatch()
+#     timer.reset()
 
-def is_color_in_range(measured_color:Color, comparison_color:Color, range:int):
+#     distance = angle - hub.imu.heading()
+#     robot_acceleration = wheels.settings()[3]
+#     wheels.settings(turn_rate=speed)
+#     wheels.turn(distance)
+
+#     # while (timer.time()) < (max_time * 1000) and angle - hub.imu.heading() > 1:
+#     #     ...
+#     wheels.settings(turn_rate=robot_acceleration)
+
+
+def is_color_in_range(measured_color: Color, comparison_color: Color, range: int):
     h = comparison_color.h - range <= measured_color.h <= comparison_color.h + range
     s = comparison_color.s - range <= measured_color.s <= comparison_color.s + range
     v = comparison_color.v - range <= measured_color.v <= comparison_color.v + range
 
-    return (h & s & v)
+    return h & s & v
+
 
 def GetOut():
     cutie.drive(-50, 0)
 
-    #while not is_color_in_range(sensor2.color, yellow, 10):
-    while sensor2.color!= Color(52, 75, 77):
+    # while not is_color_in_range(sensor2.color, yellow, 10):
+    while sensor2.color != Color(52, 75, 77):
         # print(sensor2.hsv())
         print(sensor2.hsv())
         pass
 
     left_wheel.hold()
     right_motor.hold()
+
 
 # GetOut()
 # till_black(100, 0)
@@ -138,20 +139,25 @@ def run1():
     cutie.settings(150)
     cutie.straight(-2000)
 
+
 def run2():
     cutie.use_gyro(True)
     cutie.settings(80)
     cutie.straight(-600)
+
+
 def run3():
     cutie.straight(700)
     till_black(100, 0)
     cutie.turn(80)
     cutie.straight(300)
 
+
 # left_motor.run_time(-5000, 3000)
 
 # cutie.settings(50)
 # cutie.straight(-2000)
+
 
 # GetOut()
 def cycle(iterable):
@@ -162,13 +168,13 @@ def cycle(iterable):
         except StopIteration:
             iterator = iter(iterable)
 
+
 sensor.detectable_colors(run_colors)
 color_cycle = cycle(run_colors)
 color_map = {
     Color.RED: "1",
     Color.BLUE: "2",
     Color.GREEN: "3",
- 
 }
 
 while sensor.color() != next(color_cycle):
