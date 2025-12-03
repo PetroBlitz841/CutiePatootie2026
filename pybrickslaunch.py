@@ -1,4 +1,4 @@
-HUB_NAME = "Controller2"
+HUB_NAME = "Petroboy"
 
 import os
 import subprocess
