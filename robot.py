@@ -25,7 +25,7 @@ color_list = [
     Color(343, 82, 36),  # red
     Color(216, 88, 27),  # blue
     Color(156, 72, 19),  # green
-    Color(51, 75, 71),  # yellow
+    Color(51, 75, 71),  # yellowSet-ExecutionPolicy Unrestricted -ForceSet-ExecutionPolicy Unrestricted -Force
 ]
 run_colors = (Color.BLUE, Color.GREEN, Color.RED)
 sensor2.detectable_colors(color_list)
@@ -141,7 +141,7 @@ def run2():
     cutie.use_gyro(True)
     cutie.settings(80)
     cutie.straight(700)
-    right_motor.run_time(-1000, 1000)
+    right_motor.run_time(-270, 1000)
     cutie.straight(-600)
 
 
