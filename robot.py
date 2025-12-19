@@ -140,10 +140,9 @@ def run1():
 def run2():
     cutie.use_gyro(True)
     cutie.settings(80)
-    cutie.straight(700)
-    right_motor.run_time(-270, 1000)
-    cutie.straight(-600)
-
+    for i in range(4):
+        right_motor.run_time(-500, 500)
+        right_motor.run_time(500, 800)
 
 
 def run3():
@@ -188,7 +187,7 @@ menu = [color_map[sensor.color()]]
 for i in range(len(run_colors) - 1):
     menu.append(color_map[next(color_cycle)])
 
-
+# pylint: disable=assignment-from-no-return
 selected = hub_menu(*menu)
 
 if selected == "1":
