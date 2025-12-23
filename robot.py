@@ -15,21 +15,22 @@ right_motor = Motor(Port.F, gears=[20, 28])
 
 sensor = ColorSensor(Port.C)
 sensor2 = ColorSensor(Port.D)
-
 # while sensor2.reflection() > 20:
 #         print(sensor2.reflection())
 
 
 cutie = DriveBase(left_wheel, right_wheel, 62.4, 80)
+
 color_list = [
     Color(343, 82, 36),  # red
     Color(216, 88, 27),  # blue
     Color(156, 72, 19),  # green
-    Color(51, 75, 71),  # yellowSet-ExecutionPolicy Unrestricted -ForceSet-ExecutionPolicy Unrestricted -Force
+    Color(51, 75, 71),  # yellow
 ]
 run_colors = (Color.BLUE, Color.GREEN, Color.RED)
 sensor2.detectable_colors(color_list)
 
+cutie.use_gyro(True)
 # while("1 + 1 = 3"):
 #     print(sensor2.hsv())
 # functions
@@ -110,6 +111,22 @@ def is_color_in_range(measured_color: Color, comparison_color: Color, range: int
 
     return h & s & v
 
+def turn_to(angle, then=Stop.HOLD):
+    print(hub.imu.heading())
+    start_angle = (hub.imu.heading() + 360) % 360  # 208
+    print(start_angle)
+    deg_to_turn = (angle - start_angle) % 360  # 242
+    print(deg_to_turn)
+    if then == Stop.NONE:
+        if deg_to_turn >= 180:
+            cutie.turn(deg_to_turn - 360)
+        else:
+            cutie.turn(deg_to_turn)
+        return
+    if deg_to_turn >= 180:
+        cutie.turn(deg_to_turn - 360)
+    else:
+        cutie.turn(deg_to_turn)
 
 def GetOut():
     cutie.drive(-50, 0)
@@ -123,26 +140,66 @@ def GetOut():
     left_wheel.hold()
     right_motor.hold()
 
+# left_motor.run_time(1000, 5000, wait = False)
+# cutie.straight(50)
+# left_motor.run_time(100, 5000, wait=False)
+# cutie.turn(120)
+# cutie.curve(radius=600, angle=-30)
+# cutie.straight(150)
+# # right_motor.run_time(300, 3000)
+# left_motor.run_time(-5000, 5000)
+# left_motor.run_time(5000, 5000)
 
-# GetOut()
+
+
+
+
+# cutie.straight(-3000)
+# wait(5000)
+# cutie.straight(200)
+# cutie.straight(-2000)
+# # GetOut()
 # till_black(100, 0)
+# right_motor.run_time(300, 5000)
+# left_motor.run_time(-300, 5000)
+    # right_motor.run_time(300, 5000)
 def run1():
     cutie.settings(700)
     cutie.straight(1300)
     straight_time(300, 4000)
     wait(2000)
     cutie.settings(150)
+    cutie.use_gyro(True)
     cutie.straight(-500)
+    cutie.curve(-300, -20)
+    turn_to(0)
+    cutie.straight(-620)
+    left_motor.run_time(300, 5000, wait=False)
+    cutie.use_gyro(False)
+    cutie.settings(turn_rate=70)
     cutie.turn(90)
-    cutie.straight(-500)
+    cutie.straight(-300)
+    cutie.use_gyro(True)
+    cutie.settings(turn_rate=70, straight_speed= 60)
+    cutie.straight(110)
+    cutie.turn(-90)
+    left_motor.run_time(-1000, 300, wait=False)
+    cutie.straight(170)
+    left_motor.run_angle(-160, 500)
+    cutie.straight(-300)
+    
+
 
 
 def run2():
     cutie.use_gyro(True)
     cutie.settings(80)
     for i in range(4):
-        right_motor.run_time(-500, 500)
-        right_motor.run_time(500, 800)
+        right_motor.run_time(-100,500)
+        right_motor.run_time(100,500)
+
+
+
 
 
 def run3():
@@ -187,7 +244,7 @@ menu = [color_map[sensor.color()]]
 for i in range(len(run_colors) - 1):
     menu.append(color_map[next(color_cycle)])
 
-# pylint: disable=assignment-from-no-return
+
 selected = hub_menu(*menu)
 
 if selected == "1":
