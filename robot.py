@@ -1,8 +1,8 @@
 from pybricks.hubs import PrimeHub
-from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor, ForceSensor
-from pybricks.parameters import Button, Color, Direction, Port, Side, Stop
+from pybricks.pupdevices import Motor, ColorSensor
+from pybricks.parameters import Color, Direction, Port, Stop
 from pybricks.robotics import DriveBase
-from pybricks.tools import wait, StopWatch, hub_menu
+from pybricks.tools import StopWatch, hub_menu
 
 hub = PrimeHub()
 
@@ -75,7 +75,6 @@ def till_black(speed, turn_rate):
 
     while sensor2.reflection() > 7:
         print(sensor2.reflection())
-        pass
 
     cutie.stop()
 
@@ -113,7 +112,7 @@ def till_black(speed, turn_rate):
 #     wheels.settings(turn_rate=robot_acceleration)
 
 
-def is_color_in_range(measured_color: Color, comparison_color: Color, range: int):
+def is_color_in_range(measured_color: Color, comparison_color: Color, range: int): # pylint: disable=redefined-builtin
     h = comparison_color.h - range <= measured_color.h <= comparison_color.h + range
     s = comparison_color.s - range <= measured_color.s <= comparison_color.s + range
     v = comparison_color.v - range <= measured_color.v <= comparison_color.v + range
@@ -148,10 +147,9 @@ def GetOut():
     cutie.drive(-50, 0)
 
     # while not is_color_in_range(sensor2.color, yellow, 10):
-    while sensor2.color != Color(52, 75, 77):
+    while sensor2.color() != Color(52, 75, 77):
         # print(sensor2.hsv())
         print(sensor2.hsv())
-        pass
 
     left_wheel.hold()
     right_motor.hold()
@@ -184,7 +182,7 @@ def run1():
     # cutie.straight(1300)
     # straight_time(300, 4000)
     # wait(2000)
-    cutie.settings(150, turn_rate= 40)
+    cutie.settings(150, turn_rate=40) # pylint: disable=unexpected-keyword-arg 
     # cutie.use_gyro(True)
     cutie.straight(-500)
     cutie.curve(-500, -20)
@@ -195,7 +193,7 @@ def run1():
     cutie.turn(90)
     cutie.straight(-300)
     cutie.use_gyro(True)
-    cutie.settings(turn_rate=70, straight_speed= 60)
+    cutie.settings(turn_rate=70, straight_speed=60) # pylint: disable=unexpected-keyword-arg
     cutie.straight(110)
     cutie.turn(-90)
     left_motor.run_time(-1000, 300, wait=False)
@@ -210,7 +208,7 @@ def run1():
 def run2():
     cutie.use_gyro(True)
     cutie.settings(80)
-    for i in range(4):
+    for _ in range(4):
         right_motor.run_time(-100,500)
         right_motor.run_time(100,500)
 
@@ -262,7 +260,7 @@ for i in range(len(run_colors) - 1):
     menu.append(color_map[next(color_cycle)])
 
 
-selected = hub_menu(*menu)
+selected = hub_menu(*menu) # pylint: disable=assignment-from-no-return
 
 if selected == "1":
     run1()
