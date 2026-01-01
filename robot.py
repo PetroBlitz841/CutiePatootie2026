@@ -222,10 +222,10 @@ def run3():
     gyro_abs(45, 40)
     cutie.straight(300)
     right_motor.run_time(-5000, 1000)
-    left_motor.run_angle(90, 1000)
-    cutie.straight(-300)
-    cutie.turn(33)
-    cutie.straight(200)
+    left_motor.run_angle(90, 100)
+    # cutie.straight(-300) CANCELED
+    # cutie.turn(33)
+    # cutie.straight(200)
 
 
 # left_motor.run_time(-5000, 3000)
