@@ -20,6 +20,16 @@ sensor2 = ColorSensor(Port.D)
 
 
 cutie = DriveBase(left_wheel, right_wheel, 62.4, 80)
+def gyro_abs(target, speed):
+    while not (target > hub.imu.heading() - 0.01) or not (target < hub.imu.heading() + 0.01): # the stoping range
+        direction = (target - (hub.imu.heading() % 360)) % 360 # calculating the direction of the turn
+        if direction > 180:
+            left_wheel.dc(-speed)
+            right_wheel.dc(speed)
+        else:
+            left_wheel.dc(speed)
+            right_wheel.dc(-speed)
+    cutie.stop()
 
 color_list = [
     Color(343, 82, 36),  # red
@@ -43,7 +53,6 @@ cutie.use_gyro(True)
 #         pass
 
 #     cutie.stop()
-
 
 # right_motor.run_time(5000, 5000, wait=False)
 def straight_time(speed, time):
@@ -127,6 +136,13 @@ def turn_to(angle, then=Stop.HOLD):
         cutie.turn(deg_to_turn - 360)
     else:
         cutie.turn(deg_to_turn)
+# cutie.settings(turn_rate=40)
+# cutie.turn(360)
+# # turn_to(90)
+# # hub.imu.reset_heading(0)
+# # wait(50)
+# gyro_abs(57, 40)
+# gyro_abs(0, 40)
 
 def GetOut():
     cutie.drive(-50, 0)
@@ -164,19 +180,18 @@ def GetOut():
 # left_motor.run_time(-300, 5000)
     # right_motor.run_time(300, 5000)
 def run1():
-    cutie.settings(700)
-    cutie.straight(1300)
-    straight_time(300, 4000)
-    wait(2000)
-    cutie.settings(150)
-    cutie.use_gyro(True)
+    # cutie.settings(700)
+    # cutie.straight(1300)
+    # straight_time(300, 4000)
+    # wait(2000)
+    cutie.settings(150, turn_rate= 40)
+    # cutie.use_gyro(True)
     cutie.straight(-500)
-    cutie.curve(-300, -20)
+    cutie.curve(-500, -20)
     turn_to(0)
-    cutie.straight(-620)
+    cutie.straight(-550)
     left_motor.run_time(300, 5000, wait=False)
     cutie.use_gyro(False)
-    cutie.settings(turn_rate=70)
     cutie.turn(90)
     cutie.straight(-300)
     cutie.use_gyro(True)
@@ -184,8 +199,9 @@ def run1():
     cutie.straight(110)
     cutie.turn(-90)
     left_motor.run_time(-1000, 300, wait=False)
-    cutie.straight(170)
+    cutie.straight(180)
     left_motor.run_angle(-160, 500)
+    left_motor.run_angle(160, 270)
     cutie.straight(-300)
     
 
@@ -205,9 +221,10 @@ def run2():
 def run3():
     cutie.straight(700)
     till_black(100, 0)
-    cutie.turn(57)
+    gyro_abs(45, 40)
     cutie.straight(300)
     right_motor.run_time(-5000, 1000)
+    left_motor.run_angle(90, 1000)
     cutie.straight(-300)
     cutie.turn(33)
     cutie.straight(200)
