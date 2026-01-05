@@ -263,8 +263,11 @@ for i in range(len(run_colors) - 1):
 selected = hub_menu(*menu) # pylint: disable=assignment-from-no-return
 
 if selected == "1":
+    hub.imu.reset_heading(0)
     run1()
 elif selected == "2":
+    hub.imu.reset_heading(0)
     run2()
 elif selected == "3":
+    hub.imu.reset_heading(0)
     run3()
