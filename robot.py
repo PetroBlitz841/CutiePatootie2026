@@ -2,7 +2,7 @@ from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import Motor, ColorSensor
 from pybricks.parameters import Color, Direction, Port, Stop
 from pybricks.robotics import DriveBase
-from pybricks.tools import StopWatch, hub_menu
+from pybricks.tools import StopWatch, hub_menu, wait
 
 hub = PrimeHub()
 
@@ -14,7 +14,7 @@ left_motor = Motor(Port.B, gears=[20, 28])
 right_motor = Motor(Port.F, gears=[20, 28])
 
 sensor = ColorSensor(Port.C)
-sensor2 = ColorSensor(Port.D)
+sensor2 = ColorSensor(Port.C)
 # while sensor2.reflection() > 20:
 #         print(sensor2.reflection())
 
@@ -74,7 +74,8 @@ def till_black(speed, turn_rate):
     cutie.drive(speed, turn_rate)
 
     while sensor2.reflection() > 7:
-        print(sensor2.reflection())
+        # print(sensor2.reflection())
+        pass
 
     cutie.stop()
 
@@ -178,37 +179,42 @@ def GetOut():
 # left_motor.run_time(-300, 5000)
     # right_motor.run_time(300, 5000)
 def run1():
-    cutie.settings(700)
-    cutie.straight(1300)
-    straight_time(300, 4000)
-    wait(100)
-    cutie.settings(150, turn_rate= 40)
-    cutie.use_gyro(True)
+    # cutie.settings(700)
+    # cutie.straight(1300)
+    # straight_time(300, 4000)
+    # wait(100)
+    # cutie.settings(150, turn_rate= 40)
+    # cutie.use_gyro(True)
 
-    cutie.settings(100)
-    cutie.straight(-500)
+    cutie.settings(80)
+    cutie.straight(-400, then=Stop.NONE)
+    cutie.settings(200)
+    cutie.straight(-100)
     cutie.curve(-500, -20)
-    turn_to(0)
-    cutie.straight(-560)
+    gyro_abs(0, 30)
+    cutie.straight(-540)
     right_motor.run_time(300, 5000, wait=False)
     cutie.use_gyro(False)
     cutie.turn(90)
-    cutie.straight(-300)
+    straight_time(-200, 4000)
     cutie.use_gyro(True)
-    cutie.settings(turn_rate=70, straight_speed= 60)
+    cutie.settings(turn_rate=70, straight_speed= 80)
     right_motor.run_angle(-160, 100, wait=False)
     cutie.straight(25)
     cutie.turn(-90)
     till_black(50, 0)
+    cutie.straight(10)
     left_motor.run_time(-2000, 3000, wait=False)
     right_motor.run_angle(-160, 400)
-    right_motor.run_angle(160, 250)
+    right_motor.run_angle(160, 220)
     cutie.straight(-170)
     right_motor.run_angle(-800, 500)
     cutie.straight(70)
     cutie.straight(-70)
     cutie.straight(130)
-    cutie.turn(-90)
+    cutie.settings(straight_speed= 400, turn_rate=400)
+    turn_to(-70)
+    turn_to(-70)
     cutie.straight(-400)
     
 
@@ -225,16 +231,25 @@ def run2():
 
 
 def run3():
+    cutie.settings(straight_speed=1000)
     cutie.straight(700)
     till_black(100, 0)
-    gyro_abs(45, 40)
+    gyro_abs(48, 30)
+    cutie.settings(straight_speed=200)
     cutie.straight(300)
-    right_motor.run_time(-5000, 1000)
-    left_motor.run_angle(90, 100)
-    # cutie.straight(-300) CANCELED
-    # cutie.turn(33)
-    # cutie.straight(200)
+    cutie.straight(-20)
+    right_motor.run_time(-5000, 1000) # statue
+    left_motor.run_time(90, 1500) # forum, mechanical stop
+    cutie.straight(-300) # gets out
 
+    # victory_dance()
+
+def victory_dance():
+    # TODO: add rythem and music
+    # go to another place to not destroy back lines (turn than drive)
+    cutie.drive(0, 360)
+    while True:
+        wait(100)
 
 # left_motor.run_time(-5000, 3000)
 
