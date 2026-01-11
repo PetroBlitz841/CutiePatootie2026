@@ -14,7 +14,7 @@ left_motor = Motor(Port.B, gears=[20, 28])
 right_motor = Motor(Port.F, gears=[20, 28])
 
 sensor = ColorSensor(Port.C)
-sensor2 = ColorSensor(Port.C)
+sensor2 = ColorSensor(Port.D)
 # while sensor2.reflection() > 20:
 #         print(sensor2.reflection())
 
@@ -78,6 +78,20 @@ def till_black(speed, turn_rate):
         pass
 
     cutie.stop()
+
+color_list2 = [
+    Color(156, 72, 19),  # red
+]
+sensor2.detectable_colors(color_list2)
+def till_red(speed, turn_rate):
+    cutie.drive(speed, turn_rate)
+
+    while hub.imu.tilt()[1] < -4 or hub.imu.tilt()[1] > 4:
+        print(hub.imu.tilt())
+        pass
+
+    cutie.stop()
+# till_red(-50, 0)
 
 
 # def abs_turn(target):
@@ -178,45 +192,50 @@ def GetOut():
 # right_motor.run_time(300, 5000)
 # left_motor.run_time(-300, 5000)
     # right_motor.run_time(300, 5000)
+# cutie.curve(-6000, -60)
 def run1():
-    # cutie.settings(700)
-    # cutie.straight(1300)
-    # straight_time(300, 4000)
-    # wait(100)
-    # cutie.settings(150, turn_rate= 40)
-    # cutie.use_gyro(True)
+    cutie.settings(1000)
+    cutie.straight(1300)
+    straight_time(600, 4000)
+    wait(100)
+    cutie.settings(150, turn_rate= 40)
+    cutie.use_gyro(True)
 
+    # GOING DOWN
     cutie.settings(80)
     cutie.straight(-400, then=Stop.NONE)
-    cutie.settings(200)
-    cutie.straight(-100)
-    cutie.curve(-500, -20)
+    cutie.settings(400)
+    cutie.straight(-100, then=Stop.NONE)
+    cutie.curve(-500, -30)
     gyro_abs(0, 30)
-    cutie.straight(-540)
+    cutie.straight(-480)
     right_motor.run_time(300, 5000, wait=False)
     cutie.use_gyro(False)
-    cutie.turn(90)
-    straight_time(-200, 4000)
+    cutie.settings(turn_rate=80)
+    turn_to(90)
+    straight_time(-200, 2000)
     cutie.use_gyro(True)
     cutie.settings(turn_rate=70, straight_speed= 80)
-    right_motor.run_angle(-160, 100, wait=False)
+    right_motor.run_angle(-160, 150, wait=False)
     cutie.straight(25)
     cutie.turn(-90)
-    till_black(50, 0)
+    till_black(65, 0)
     cutie.straight(10)
     left_motor.run_time(-2000, 3000, wait=False)
     right_motor.run_angle(-160, 400)
     right_motor.run_angle(160, 220)
+    cutie.settings(turn_rate=70, straight_speed= 80)
     cutie.straight(-170)
     right_motor.run_angle(-800, 500)
-    cutie.straight(70)
-    cutie.straight(-70)
-    cutie.straight(130)
-    cutie.settings(straight_speed= 400, turn_rate=400)
-    turn_to(-70)
-    turn_to(-70)
-    cutie.straight(-400)
-    
+    cutie.straight(80)
+    cutie.straight(-80)
+    cutie.straight(160)
+    cutie.settings(straight_speed= 400, turn_rate=200)
+    cutie.turn(-70)
+    cutie.settings(300)
+    cutie.straight(-200, then=Stop.NONE)
+    cutie.curve(-1000, -60)
+    # yiftach was here, dont tell anyone
 
 
 def run2():
