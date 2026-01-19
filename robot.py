@@ -7,14 +7,14 @@ from pybricks.tools import StopWatch, hub_menu, wait
 hub = PrimeHub()
 
 # CUTIE WHEELS
-left_wheel = Motor(Port.A, Direction.COUNTERCLOCKWISE)
-right_wheel = Motor(Port.E, Direction.CLOCKWISE)
+left_wheel = Motor(Port.E, Direction.COUNTERCLOCKWISE)
+right_wheel = Motor(Port.A, Direction.CLOCKWISE)
 
-left_motor = Motor(Port.B, gears=[20, 28])
-right_motor = Motor(Port.F, gears=[20, 28])
+left_motor = Motor(Port.D, gears=[20, 28])
+right_motor = Motor(Port.B, gears=[20, 28])
 
 sensor = ColorSensor(Port.C)
-sensor2 = ColorSensor(Port.D)
+sensor2 = ColorSensor(Port.F)
 # while sensor2.reflection() > 20:
 #         print(sensor2.reflection())
 
