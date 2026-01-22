@@ -10,11 +10,11 @@ hub = PrimeHub()
 left_wheel = Motor(Port.E, Direction.COUNTERCLOCKWISE)
 right_wheel = Motor(Port.A, Direction.CLOCKWISE)
 
-left_motor = Motor(Port.D, gears=[20, 28])
-right_motor = Motor(Port.B, gears=[20, 28])
+left_motor = Motor(Port.F, gears=[20, 28])
+right_motor = Motor(Port.D, gears=[20, 28])
 
 sensor = ColorSensor(Port.C)
-sensor2 = ColorSensor(Port.F)
+sensor2 = ColorSensor(Port.B)
 # while sensor2.reflection() > 20:
 #         print(sensor2.reflection())
 
@@ -242,6 +242,21 @@ def run1():
 
 
 def run2():
+    # cutie.straight(-300)
+    # cutie.turn(-20)
+    cutie.curve(4000, 10)
+    cutie.straight(-150, then=Stop.NONE)
+    cutie.curve(-150, -180)
+    turn_to(-180)
+    cutie.straight(-350)
+    till_black(-100, 0)
+    cutie.settings(straight_speed=200, turn_rate=80)
+    turn_to(-90)
+    cutie.straight(-85)
+    cutie.turn(-20)
+    right_motor.run_time(-1000, 3000)
+    turn_to(-90)
+    cutie.straight(100)
     cutie.use_gyro(True)
     cutie.settings(80)
     for _ in range(4):
