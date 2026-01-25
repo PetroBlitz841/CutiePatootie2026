@@ -33,6 +33,7 @@ cutie = DriveBase(left_wheel, right_wheel, 62.4, 80)
 #             right_wheel.dc(-speed)
 #     cutie.stop()
 
+
 color_list = [
     Color(343, 82, 36),  # red
     Color(216, 88, 27),  # blue
@@ -70,6 +71,15 @@ def straight_time(speed, time):
     cutie.stop()
 
     cutie.settings(last)
+
+# right_motor.run_time(5000, 5000, wait=False)
+def curve_time(time, angle):
+    timer = StopWatch()
+
+
+    while timer.time() < time:
+        cutie.drive(cutie.settings()[0], angle)
+    cutie.stop()
 
 
 def till_black(speed, turn_rate):
@@ -185,7 +195,7 @@ def GetOut():
 # left_motor.run_time(-5000, 5000)
 # left_motor.run_time(5000, 5000)
 
-def gyro_abs(target_angle, speed=150, kp=1.5, ke = 10):
+def gyro_abs(target_angle, speed=100, kp=1.5, ke = 20):
         
     while True:
         error = target_angle - hub.imu.heading()
@@ -262,23 +272,39 @@ def run1():
 def run2():
     # cutie.straight(-300)
     # cutie.turn(-20)
-    cutie.curve(1200, 25)
+    curve_time(3000, 15)
     right_motor.run_time(-1000, 1000)
     cutie.straight(-150, then=Stop.NONE)
-    cutie.curve(-120, -180)
-    gyro_abs(180)
-    cutie.straight(-350, then=Stop.NONE)
+    cutie.use_gyro(False)
+    cutie.curve(-150, -180)
+    wait(100)
+    gyro_abs(180, 250, ke=25)
+    cutie.use_gyro(True)
+    cutie.straight(-380, then=Stop.NONE)
     till_black(-100, 0)
     cutie.settings(straight_speed=100, turn_rate=80)
-    gyro_abs(270)
+    gyro_abs(270, 250, ke=25)
     till_black(-100, 0)
     cutie.straight(-50)
     cutie.turn(-30)
     right_motor.run_time(-1000, 3000)
     turn_to(-90)
-    cutie.straight(100)
     cutie.use_gyro(True)
     cutie.settings(80)
+    cutie.straight(30)
+    gyro_abs(270, 250, ke=20)
+    till_black(100, 0)
+    cutie.straight(85)
+    gyro_abs(360, 250, ke=20)
+    cutie.straight(170)
+    cutie.straight(-100)
+    cutie.turn(45)
+    cutie.straight(40)
+    cutie.curve(200, -45)
+    gyro_abs(360, 250, ke = 20)
+    cutie.straight(200)
+
+
     for _ in range(4):
         right_motor.run_time(-100,500)
         right_motor.run_time(100,500)
