@@ -33,27 +33,6 @@ cutie = DriveBase(left_wheel, right_wheel, 62.4, 80)
 #             right_wheel.dc(-speed)
 #     cutie.stop()
 
-def gyro_abs(target, base_speed, kp=0.2, then: Stop = Stop.HOLD):
-    """turns the robot to a given angle relative to the launch angle"""
-    STOP_RANGE = 0.15
-    while not (
-        hub.imu.heading() - STOP_RANGE < target < hub.imu.heading() + STOP_RANGE
-    ):
-        error = (target - (hub.imu.heading() % 360)) % 360
-        speed = base_speed + (error * kp)
-        direction = "left" if error > 180 else "right"
-        if direction == "left":
-            left_wheel.dc(-speed + 15)
-            right_wheel.dc(speed - 15)
-        else:
-            left_wheel.dc(speed + 15)
-            right_wheel.dc(-speed - 15)
-
-    if then == Stop.HOLD:
-        left_wheel.hold()
-        right_wheel.hold()
-    else:
-        wheels.brake()
 color_list = [
     Color(343, 82, 36),  # red
     Color(216, 88, 27),  # blue
@@ -149,10 +128,10 @@ def till_red(speed, turn_rate):
 #     #     ...
 #     wheels.settings(turn_rate=robot_acceleration)
 
-gyro_abs(90, 15)
-print(hub.imu.heading())
-wait(1000)
-print(hub.imu.heading())
+# gyro_abs(90, 15)
+# print(hub.imu.heading())
+# wait(1000)
+# print(hub.imu.heading())
 
 def is_color_in_range(measured_color: Color, comparison_color: Color, range: int): # pylint: disable=redefined-builtin
     h = comparison_color.h - range <= measured_color.h <= comparison_color.h + range
@@ -206,10 +185,22 @@ def GetOut():
 # left_motor.run_time(-5000, 5000)
 # left_motor.run_time(5000, 5000)
 
+def gyro_abs(target_angle, speed=150, kp=1.5, ke = 10):
+        
+    while True:
+        error = target_angle - hub.imu.heading()
+        
+        turn_rate = error * kp + ke
+        
+        if abs(error) < 0.3:
+            break
+            
+        cutie.drive(0, turn_rate)
+        wait(10)
+        
+    cutie.stop()
 
-
-
-
+# Example: Turn 90 degrees right
 # cutie.straight(-3000)
 # wait(5000)
 # cutie.straight(200)
@@ -221,20 +212,20 @@ def GetOut():
     # right_motor.run_time(300, 5000)
 # cutie.curve(-6000, -60)
 def run1():
-    # cutie.settings(1000)
-    # cutie.straight(1300)
-    # straight_time(600, 4000)
-    # wait(100)
-    # cutie.settings(150, turn_rate= 40)
-    # cutie.use_gyro(True)
+    cutie.settings(1000)
+    cutie.straight(1300)
+    straight_time(600, 4000)
+    wait(100)
+    cutie.settings(150, turn_rate= 40)
+    cutie.use_gyro(True)
 
     # GOING DOWN
     cutie.settings(80)
-    cutie.straight(-400, then=Stop.NONE)
+    cutie.straight(-200, then=Stop.NONE)
     gyro_abs(0, 30)
-    cutie.settings(400)
-    cutie.curve(-500, -30)
-    gyro_abs(0, 5)
+    cutie.settings(200)
+    cutie.curve(-500, -45)
+    gyro_abs(0, 15)
     cutie.straight(-580)
     right_motor.run_time(300, 5000, wait=False)
     cutie.use_gyro(False)
@@ -271,14 +262,15 @@ def run1():
 def run2():
     # cutie.straight(-300)
     # cutie.turn(-20)
-    cutie.curve(2000, 25)
+    cutie.curve(1200, 25)
+    right_motor.run_time(-1000, 1000)
     cutie.straight(-150, then=Stop.NONE)
     cutie.curve(-120, -180)
-    gyro_abs(180, 15)
+    gyro_abs(180)
     cutie.straight(-350, then=Stop.NONE)
     till_black(-100, 0)
-    cutie.settings(straight_speed=200, turn_rate=80)
-    gyro_abs(270, 15)
+    cutie.settings(straight_speed=100, turn_rate=80)
+    gyro_abs(270)
     till_black(-100, 0)
     cutie.straight(-50)
     cutie.turn(-30)
