@@ -195,7 +195,7 @@ def GetOut():
 def gyro_abs(target_angle, speed=100, kp=1.5, ke = 20):
         
     while True:
-        error = target_angle - hub.imu.heading()
+        error = ((target_angle - hub.imu.heading() + 180) % 360) - 180
         
         turn_rate = error * kp
         if (turn_rate > 0):
