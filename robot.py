@@ -40,7 +40,7 @@ color_list = [
     Color(156, 72, 19),  # green
     Color(51, 75, 71),  # yellow
 ]
-run_colors = (Color.BLUE, Color.GREEN, Color.RED)
+run_colors = (Color.BLUE, Color.GREEN, Color.RED, Color.NONE)
 sensor2.detectable_colors(color_list)
 
 cutie.use_gyro(True)
@@ -210,7 +210,7 @@ def gyro_abs(target_angle, speed=100, kp=1.5, ke = 20):
         cutie.drive(0, turn_rate)
         wait(10)
     cutie.stop()
-    wait(1000)
+    wait(200)
     print(hub.imu.heading())
     
 
@@ -348,6 +348,10 @@ def run3():
     cutie.straight(-300) # gets out
 
     # victory_dance()
+def run4():
+    cutie.settings(straight_speed=500)
+    cutie.straight(600)
+    cutie.straight(-800)
 
 def victory_dance():
     # TODO: add rythem and music
@@ -377,6 +381,7 @@ color_map = {
     Color.RED: "1",
     Color.BLUE: "2",
     Color.GREEN: "3",
+    Color.NONE: "4"
 }
 
 while sensor.color() != next(color_cycle):
@@ -398,3 +403,6 @@ elif selected == "2":
 elif selected == "3":
     hub.imu.reset_heading(0)
     run3()
+elif selected == "4":
+    hub.imu.reset_heading(0)
+    run4()
