@@ -44,20 +44,6 @@ run_colors = (Color.BLUE, Color.GREEN, Color.RED, Color.NONE)
 sensor2.detectable_colors(color_list)
 
 cutie.use_gyro(True)
-# while("1 + 1 = 3"):
-#     print(sensor2.hsv())
-# functions
-# def GetOut():
-#     cutie.drive(-50, 0)
-
-#     while sensor.color() != Color.MAGENTA:
-#         print(sensor.color())
-#         print(sensor.hsv())
-#         pass
-
-#     cutie.stop()
-
-# right_motor.run_time(5000, 5000, wait=False)
 def straight_time(speed, time):
     timer = StopWatch()
     last = cutie.settings()[0]
@@ -195,42 +181,22 @@ def GetOut():
 def gyro_abs(target_angle, speed=100, kp=1.5, ke = 20):
         
     while True:
-        error = ((target_angle - hub.imu.heading() + 180) % 360) - 180
+        error = target_angle - hub.imu.heading()
         
         turn_rate = error * kp
         if (turn_rate > 0):
             turn_rate+=ke
         else:
              turn_rate-=ke
-        print(turn_rate)
         if abs(error) < 0.3:
             break
-        print(hub.imu.heading())
             
         cutie.drive(0, turn_rate)
         wait(10)
     cutie.stop()
     wait(200)
-    print(hub.imu.heading())
     
 
-# gyro_abs(90)
-
-# Example: Turn 90 degrees right
-# cutie.straight(-3000)
-# wait(5000)
-# cutie.straight(200)
-# cutie.straight(-2000)
-# # GetOut()
-# till_black(100, 0)
-# right_motor.run_time(300, 5000)
-# left_motor.run_time(-300, 5000)
-    # right_motor.run_time(300, 5000)
-# cutie.curve(-6000, -60)
-# gyro_abs(90)
-# cutie.settings(500)
-# cutie.straight(5000)
-# cutie.curve(20, 1000)
 
 def run1():
     cutie.settings(1000)
@@ -241,7 +207,7 @@ def run1():
     cutie.use_gyro(True)
 
     # GOING DOWN
-    cutie.settings(80)
+    cutie.settings(200)
     cutie.straight(-200, then=Stop.NONE)
     wait(10)
     gyro_abs(0, 250, ke=25)
@@ -253,7 +219,7 @@ def run1():
     cutie.settings(turn_acceleration = 200)
     right_motor.run_time(speed=300, time=5000, wait=False)
     cutie.use_gyro(False)
-    cutie.settings(turn_rate=50)
+    cutie.settings(turn_rate=70)
     turn_to(90)
     straight_time(-200, 2000)
     hub.imu.reset_heading(90)
@@ -261,7 +227,7 @@ def run1():
     cutie.settings(turn_rate=70, straight_speed= 80)
     right_motor.run_angle(-160, 150, wait=False)
     cutie.straight(25)
-    gyro_abs(0, 30, kp = 0.5, ke=5)
+    gyro_abs(0, 30, kp = 1.5, ke=5)
     cutie.use_gyro(True)
     till_black(65, 0)
     cutie.straight(10)
@@ -289,8 +255,6 @@ def run1():
 
 
 def run2():
-    # cutie.straight(-300)
-    # cutie.turn(-20)
     curve_time(3000, 15)
     right_motor.run_time(-1000, 1000)
     cutie.straight(-500, then=Stop.NONE)
@@ -329,7 +293,7 @@ def run2():
     cutie.straight(30)
     cutie.settings(turn_rate=200)
     cutie.turn(-60)
-    cutie.straight(1000)
+    cutie.straight(3000)
 
 
 
@@ -339,7 +303,7 @@ def run3():
     # right_motor.run_until_stalled(300, duty_limit=50)
     # wait(2000)
     till_black(100, 0)
-    gyro_abs(48, 30)
+    gyro_abs(45, 30)
     cutie.settings(straight_speed=200)
     cutie.straight(300)
     cutie.straight(-20)
@@ -351,7 +315,9 @@ def run3():
 def run4():
     cutie.settings(straight_speed=500)
     cutie.straight(600)
-    cutie.straight(-800)
+    cutie.straight(-400, then=Stop.NONE)
+    cutie.curve(-200, -60, then=Stop.NONE)
+    cutie.straight(-4000)
 
 def victory_dance():
     # TODO: add rythem and music
@@ -359,10 +325,6 @@ def victory_dance():
     cutie.drive(0, 360)
     while True:
         wait(100)
-# left_motor.run_time(-5000, 3000)
-
-# cutie.settings(50)
-# cutie.straight(-2000)
 
 
 # GetOut()
