@@ -26,7 +26,7 @@ color_list = [
     Color(51, 75, 71),  # yellow
 ]
 
-run_colors = (Color.BLUE, Color.GREEN, Color.RED, Color.NONE)
+run_colors = (Color.RED, Color. YELLOW, Color.BLUE, Color.GREEN)
 sensor2.detectable_colors(color_list)
 
 cutie.use_gyro(True)
@@ -114,8 +114,8 @@ def run1():
     cutie.settings(200)
     cutie.curve(-500, -35)
     cutie.straight(-1)
-    gyro_abs(0, 150, ke=25)
-    cutie.straight(-650)
+    gyro_abs(0, 150, ke=125)
+    cutie.straight(-695)
     cutie.settings(turn_acceleration = 200)
     right_motor.run_time(speed=300, time=5000, wait=False)
     cutie.use_gyro(False)
@@ -134,7 +134,7 @@ def run1():
     left_motor.run_time(-2000, 3500, wait=False)
     right_motor.run_angle(-160, 400)
     right_motor.run_time(200, 2000)
-    right_motor.run_angle(-160, 140)
+    right_motor.run_angle(-160, 120)
     cutie.settings(turn_rate=70, straight_speed= 80)
     gyro_abs(0, 250, ke=25)
     cutie.straight(-170)
@@ -154,27 +154,29 @@ def run1():
     # yiftach was here, dont tell anyone
 
 
+
 def run2():
-    curve_time(3000, 15)
-    right_motor.run_time(-1000, 1000)
-    cutie.straight(-500, then=Stop.NONE)
+    curve_time(3000, 5) #go into wall and into boat
+    right_motor.run_time(-1000, 1000) #Drop flag
+    cutie.settings(300)
+    cutie.straight(-500, then=Stop.NONE) #go back
     cutie.use_gyro(True)
-    cutie.curve(500, -25)
-    cutie.straight(550)
-    gyro_abs(0, 250, ke=25)
+    cutie.curve(500, -25,then=Stop.NONE)
+    cutie.straight(450)
+    gyro_abs(0, 250, ke=25) 
     cutie.straight(50)
-    till_black(100, 0)
+    till_black(100, 0) #go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
     cutie.straight(50)
-    gyro_abs(-90, 250, ke=25)
-    till_black(-100, 0)
-    cutie.straight(-25)
-    cutie.turn(-30)
-    right_motor.run_time(-1000, 3000)
+    gyro_abs(-90, 250, ke=25) #turn to mission
+    till_black(-100, 0) #go to misiion using black line
+    cutie.straight(-40)
+    cutie.turn(-30) #turn to gear
+    right_motor.run_time(-1000, 3000) #turn gear (lift up items)
     cutie.use_gyro(True)
+    gyro_abs(-90, 250, ke=25) #fix up
     cutie.settings(80)
     cutie.straight(30)
-    turn_to(-90)
     till_black(100, 0)
     cutie.straight(100)
     gyro_abs(0, 250, ke=20)
@@ -185,34 +187,43 @@ def run2():
     cutie.turn(45)
     cutie.straight(40,then=Stop.NONE)
     cutie.curve(60, -45, then=Stop.NONE)
-    cutie.straight(350)
-    turn_to(0)
-    cutie.settings(270)
-    turn_to(90)
-    straight_time(-100, 1500)
-    cutie.straight(30)
-    cutie.settings(turn_rate=200)
-    cutie.turn(-60)
-    cutie.straight(3000)
+    cutie.straight(550)
+    gyro_abs(45)
+    cutie.straight(-200)
+    left_motor.run_time(500, 2000)
+    cutie.straight(200)
+    cutie.straight(-50)
+    left_motor.run_time(-500, 2000)
+    cutie.straight(300)
+    left_motor.run_time(500, 2000)
+    cutie.straight(-300)
+    cutie.straight(15)
+    cutie.turn(-30)
+
 
 
 
 def run3():
     cutie.settings(straight_speed=1000) #
-    cutie.straight(distance = 700) #go straight
+    cutie.straight(distance = 730) #go straight
     till_black(speed = 100,turn_rate = 0) #until black
-    gyro_abs(angle = 45, speed = 30) # turn to degree 45
+    gyro_abs(45,30) # turn to degree 45
     cutie.settings(straight_speed=200)
     cutie.straight(300) #go into statue
-    cutie.straight(-20)
+    cutie.straight(-25)
     right_motor.run_time(speed = -5000,time = 1000) # statue
     left_motor.run_time(speed = 90,time = 1500) # forum, mechanical stop
     cutie.straight(-300) # gets out
 
     # victory_dance()
 def run4():
-    cutie.settings(straight_speed=500)
-    cutie.straight(600)
+    cutie.settings(straight_speed=500, straight_acceleration=350)
+    left_motor.run_until_stalled(-1100)
+    cutie.straight(650)
+    cutie.straight(-250)
+    cutie.straight(150)
+    left_motor.run_time(200, 5000, wait=False)
+    wait(1500)
     cutie.straight(-400, then=Stop.NONE)
     cutie.curve(-200, -60, then=Stop.NONE)
     cutie.straight(-4000)
@@ -241,7 +252,7 @@ color_map = {
     Color.RED: "1",
     Color.BLUE: "2",
     Color.GREEN: "3",
-    Color.NONE: "4"
+    Color.YELLOW: "4"
 }
 
 while sensor.color() != next(color_cycle):
