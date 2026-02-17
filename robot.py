@@ -60,21 +60,6 @@ def till_black(speed, turn_rate): #go straight until line
 
     cutie.stop() #Stop
 
-def turn_to(angle, then=Stop.HOLD): #turn using pybricks's function
-    start_angle = (hub.imu.heading() + 360) % 360 #cal
-    deg_to_turn = (angle - start_angle) % 360  #calculate how much need to turn
-    if then == Stop.NONE:
-        if deg_to_turn >= 180:
-            cutie.turn(angle = deg_to_turn - 360)
-        else:
-            cutie.turn(angle = deg_to_turn)
-        return
-    if deg_to_turn >= 180:
-        cutie.turn(deg_to_turn - 360)
-    else:
-        cutie.turn(deg_to_turn)
-
-
 def gyro_turn(
     target,
     max_rate=300,
@@ -115,6 +100,21 @@ def gyro_turn(
         wait(10)
 
     cutie.stop()
+
+def turn_to(angle, then=Stop.HOLD): #turn using pybricks's function
+    start_angle = (hub.imu.heading() + 360) % 360 #cal
+    deg_to_turn = (angle - start_angle) % 360  #calculate how much need to turn
+    if then == Stop.NONE:
+        if deg_to_turn >= 180:
+            cutie.turn(angle = deg_to_turn - 360)
+        else:
+            cutie.turn(angle = deg_to_turn)
+        return
+    if deg_to_turn >= 180:
+        cutie.turn(deg_to_turn - 360)
+    else:
+        cutie.turn(deg_to_turn)
+
 
 def gyro_abs(target_angle, speed=100, kp=1.5, ke = 20):
         
@@ -205,9 +205,6 @@ def run2():
     cutie.curve(500, -25,then=Stop.NONE)
     cutie.straight(450)
     gyro_abs(0, 250, ke=25) 
-    print(hub.imu.heading())
-    wait(1000)
-    print(hub.imu.heading())
     cutie.straight(50)
     till_black(100, 0) #go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
@@ -231,15 +228,18 @@ def run2():
     cutie.turn(45)
     cutie.straight(40,then=Stop.NONE)
     cutie.curve(60, -45, then=Stop.NONE)
-    cutie.straight(550)
+    cutie.straight(570)
+    right_motor.run_time(-200, 2000, wait=False)
     gyro_abs(45)
     cutie.straight(-200)
-    left_motor.run_time(500, 2000)
+    cutie.straight(10)
+    right_motor.run_time(200, 3000, wait=False)
+    left_motor.run_time(1500, 3000)
     cutie.straight(200)
     cutie.straight(-50)
-    left_motor.run_time(-500, 2000)
-    cutie.straight(300)
     left_motor.run_time(500, 2000)
+    cutie.straight(300)
+    left_motor.run_time(-500, 2000)
     cutie.straight(-300)
     cutie.straight(15)
     cutie.turn(-30)
