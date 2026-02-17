@@ -75,6 +75,47 @@ def turn_to(angle, then=Stop.HOLD): #turn using pybricks's function
         cutie.turn(deg_to_turn)
 
 
+def gyro_turn(
+    target,
+    max_rate=300,
+    kp=2.1,
+    kd=0.6,
+    min_rate=10,
+    angle_tol=0.3,
+    speed_tol=0.2,
+    max_time=3670
+):
+    last_error = 0
+    timer = StopWatch()
+    timer.reset()
+
+    while timer.time() < max_time:
+        current = hub.imu.heading()
+
+        # Shortest angle wraparound
+        error = ((target - current + 180) % 360) - 180
+        d_error = error - last_error
+
+        # Dynamic max turn rate based on remaining error
+        dynamic_max = max(min_rate, min(max_rate, abs(error) * 5))
+
+        # PD control
+        turn_rate = kp * error + kd * d_error
+
+        # Clamp turn rate
+        turn_rate = max(-dynamic_max, min(dynamic_max, turn_rate))
+
+        cutie.drive(0, turn_rate)
+
+        # Exit condition
+        if abs(error) < angle_tol and abs(d_error) < speed_tol:
+            break
+
+        last_error = error
+        wait(10)
+
+    cutie.stop()
+
 def gyro_abs(target_angle, speed=100, kp=1.5, ke = 20):
         
     while True:
@@ -164,6 +205,9 @@ def run2():
     cutie.curve(500, -25,then=Stop.NONE)
     cutie.straight(450)
     gyro_abs(0, 250, ke=25) 
+    print(hub.imu.heading())
+    wait(1000)
+    print(hub.imu.heading())
     cutie.straight(50)
     till_black(100, 0) #go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
