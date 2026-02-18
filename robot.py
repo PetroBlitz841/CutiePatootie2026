@@ -237,12 +237,8 @@ def run2():
     left_motor.run_time(1500, 3000)
     cutie.straight(200)
     cutie.straight(-50)
-    left_motor.run_time(500, 2000)
-    cutie.straight(300)
     left_motor.run_time(-500, 2000)
-    cutie.straight(-300)
-    cutie.straight(15)
-    cutie.turn(-30)
+    cutie.straight(1000)
 
 
 
