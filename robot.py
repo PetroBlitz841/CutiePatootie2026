@@ -60,6 +60,30 @@ def till_black(speed, turn_rate): #go straight until line
 
     cutie.stop() #Stop
 
+def till_roll(speed, turn_rate, roll): #go straight until 
+    cutie.drive(speed= speed, turn_rate=turn_rate)
+    
+    while hub.imu.tilt()[1]!=roll: #while roll not 0
+        print(hub.imu.tilt()[1])
+        pass
+
+    cutie.stop() #Stop
+
+def till_yellow(speed, turn_rate): #go straight until line
+    cutie.drive(speed= speed, turn_rate=turn_rate) #start driving
+
+    while sensor2.reflection() < 30 or sensor2.reflection()>32: #while refelction over 7, continue driving
+        pass
+
+    cutie.stop() #Stop
+
+def going_down(speed, turn_rate): #go straight until line
+    cutie.drive(speed= speed, turn_rate=turn_rate) #start driving
+
+    while hub.imu.tilt()[1]!=0 and (sensor2.reflection() < 30 or sensor2.reflection()>32): #while roll not 0
+        pass
+
+    cutie.stop() #Stop
 def gyro_turn(
     target,
     max_rate=300,
