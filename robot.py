@@ -84,6 +84,7 @@ def going_down(speed, turn_rate): #go straight until line
         pass
 
     cutie.stop() #Stop
+    
 def gyro_turn(
     target,
     max_rate=300,
@@ -95,6 +96,7 @@ def gyro_turn(
     max_time=3670
 ):
     last_error = 0
+    dt = 0.01
     timer = StopWatch()
     timer.reset()
 
@@ -103,10 +105,10 @@ def gyro_turn(
 
         # Shortest angle wraparound
         error = ((target - current + 180) % 360) - 180
-        d_error = error - last_error
+        d_error = (error - last_error) / dt
 
         # Dynamic max turn rate based on remaining error
-        dynamic_max = max(min_rate, min(max_rate, abs(error) * 5))
+        dynamic_max = max(min_rate, min(max_rate, abs(error) * 2))
 
         # PD control
         turn_rate = kp * error + kd * d_error
@@ -117,13 +119,15 @@ def gyro_turn(
         cutie.drive(0, turn_rate)
 
         # Exit condition
-        if abs(error) < angle_tol and abs(d_error) < speed_tol:
+        if abs(error) < angle_tol and abs(turn_rate) < speed_tol:
             break
 
         last_error = error
         wait(10)
 
     cutie.stop()
+
+gyro_turn(90,)
 
 def turn_to(angle, then=Stop.HOLD): #turn using pybricks's function
     start_angle = (hub.imu.heading() + 360) % 360 #cal
@@ -164,12 +168,12 @@ def gyro_abs(target_angle, speed=100, kp=1.5, ke = 20):
 
 def run1():
     #MERKAVA!!!!!
-    cutie.settings(straight_speed = 1000) #set speed to 1000
-    cutie.straight(distance=1300) #Go straight
-    straight_time(speed = 1000, time = 3000) #straight time
-    wait(100)
-    cutie.settings(150, turn_rate = 40) #apply settings
-    cutie.use_gyro(True)
+    # cutie.settings(straight_speed = 1000) #set speed to 1000
+    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    # straight_time(speed = 1000, time = 3000) #straight time
+    # wait(100)
+    # cutie.settings(150, turn_rate = 40) #apply settings
+    # cutie.use_gyro(True)
 
     # GOING DOWN
     cutie.settings(200)
@@ -177,22 +181,22 @@ def run1():
     cutie.straight(-50)
     gyro_abs(0, 250, ke=25)
     cutie.settings(200)
-    cutie.curve(-500, -35)
-    cutie.straight(-1)
+    cutie.curve(-450, -30)
     gyro_abs(0, 150, ke=5)
-    cutie.straight(-450)
+    cutie.settings(400)
+    cutie.straight(-550)
     cutie.settings(turn_acceleration = 200)
     right_motor.run_time(speed=300, time=5000, wait=False)
     cutie.use_gyro(False)
-    cutie.settings(turn_rate=70)
+    cutie.settings(200, turn_rate=70)
     turn_to(90)
     straight_time(-200, 2000)
     hub.imu.reset_heading(90)
     
     cutie.settings(turn_rate=70, straight_speed= 80)
     right_motor.run_angle(-160, 150, wait=False)
-    cutie.straight(25)
-    gyro_abs(0, 30, kp = 1.5, ke=5)
+    cutie.straight(20)
+    gyro_abs(0, 30, kp = 2, ke=5)
     cutie.use_gyro(True)
     till_black(65, 0)
     cutie.straight(10)
@@ -200,22 +204,24 @@ def run1():
     right_motor.run_angle(-160, 400)
     right_motor.run_time(200, 2000)
     right_motor.run_angle(-160, 120)
-    cutie.settings(turn_rate=70, straight_speed= 80)
+    cutie.settings(turn_rate=70, straight_speed= 150)
     gyro_abs(0, 250, ke=25)
     cutie.straight(-170)
     right_motor.run_angle(-800, 500)
     cutie.straight(120)
     gyro_abs(0, 250, ke=25)
     cutie.straight(-120)
-    cutie.straight(80)
-    cutie.turn(-30)
+    cutie.straight(60)
+    cutie.turn(50)
+    cutie.turn(-80)
     cutie.straight(50)
-    cutie.straight(-150)
+    cutie.straight(-110)
     cutie.settings(straight_speed= 400, turn_rate=200)
     turn_to(-90)
-    cutie.settings(300)
-    cutie.straight(-200, then=Stop.NONE)
-    cutie.curve(-1000, -60)
+    cutie.settings(1000)
+    
+    cutie.curve(-700, -60, then=Stop.NONE)
+    cutie.straight(-600)
     # yiftach was here, dont tell anyone
 
 
@@ -223,7 +229,7 @@ def run1():
 def run2():
     curve_time(3000, 5) #go into wall and into boat
     right_motor.run_time(-1000, 1000) #Drop flag
-    cutie.settings(300)
+    cutie.settings(400)
     cutie.straight(-500, then=Stop.NONE) #go back
     cutie.use_gyro(True)
     cutie.curve(500, -25,then=Stop.NONE)
@@ -269,14 +275,17 @@ def run2():
 
 def run3():
     cutie.settings(straight_speed=1000) #
-    cutie.straight(distance = 730) #go straight
+    cutie.straight(distance = 300, then=Stop.NONE) #go straight
+    cutie.settings(straight_speed=300)
+    cutie.straight(440, then=Stop.NONE)
     till_black(speed = 100,turn_rate = 0) #until black
-    gyro_abs(45,30) # turn to degree 45
-    cutie.settings(straight_speed=200)
+    gyro_abs(45,ke=5, kp = 2) # turn to degree 45
+    cutie.settings(straight_speed=320, straight_acceleration=750, turn_rate=250)
     cutie.straight(300) #go into statue
     cutie.straight(-25)
     right_motor.run_time(speed = -5000,time = 1000) # statue
-    left_motor.run_time(speed = 90,time = 1500) # forum, mechanical stop
+    left_motor.run_time(speed = 300,time = 1500) # forum, mechanical stop
+    cutie.turn(-25)
     cutie.straight(-300) # gets out
 
     # victory_dance()
