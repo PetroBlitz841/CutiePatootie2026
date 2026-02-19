@@ -166,21 +166,21 @@ def run1():
     #MERKAVA!!!!!
     cutie.settings(straight_speed = 1000) #set speed to 1000
     cutie.straight(distance=1300) #Go straight
-    straight_time(speed = 600, time = 4000) #straight time
+    straight_time(speed = 1000, time = 3000) #straight time
     wait(100)
     cutie.settings(150, turn_rate = 40) #apply settings
     cutie.use_gyro(True)
 
     # GOING DOWN
     cutie.settings(200)
-    cutie.straight(-200, then=Stop.NONE)
-    wait(10)
+    till_yellow(-100, 0)
+    cutie.straight(-50)
     gyro_abs(0, 250, ke=25)
     cutie.settings(200)
     cutie.curve(-500, -35)
     cutie.straight(-1)
-    gyro_abs(0, 150, ke=125)
-    cutie.straight(-695)
+    gyro_abs(0, 150, ke=5)
+    cutie.straight(-450)
     cutie.settings(turn_acceleration = 200)
     right_motor.run_time(speed=300, time=5000, wait=False)
     cutie.use_gyro(False)
