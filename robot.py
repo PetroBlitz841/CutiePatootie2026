@@ -84,50 +84,107 @@ def going_down(speed, turn_rate): #go straight until line
         pass
 
     cutie.stop() #Stop
+
+# old  
+# def gyro_turn(
+#     target,
+#     max_rate=1000,
+#     kp=3.0,
+#     kd=0.8,
+#     min_rate=10,
+#     angle_tol=0.3,
+#     speed_tol=10000,
+#     max_time=2670
+# ):
+#     last_error = 0
+#     dt = 0.01
+#     timer = StopWatch()
+#     timer.reset()
+
+#     while timer.time() < max_time:
+#         current = hub.imu.heading()
+
+#         # Shortest angle wraparound
+#         error = ((target - current + 180) % 360) - 180
+#         d_error = (error - last_error) / dt
+
+#         # Dynamic max turn rate based on remaining error
+#         dynamic_max = max(min_rate, min(max_rate, abs(error) * 3))
+
+#         # PD control
+#         turn_rate = kp * error + kd * d_error
+
+#         # Clamp turn rate
+#         turn_rate = max(-dynamic_max, min(dynamic_max, turn_rate))
+
+#         cutie.drive(0, turn_rate)
+
+#         # Exit condition
+#         if abs(error) < angle_tol and abs(turn_rate) < speed_tol:
+#             break
+
+#         last_error = error
+#         wait(10)
+
+#     cutie.stop()
+#     wait(200)
+
+def gyro_turn(target, 
+              max_rate=1000, 
+              kp=5.0, 
+              kd=0.6, 
+              ke=20,       # static bias to overcome friction
+              angle_tol=0.3, 
+              speed_tol=100, 
+              max_time=2670):
     
-def gyro_turn(
-    target,
-    max_rate=300,
-    kp=2.1,
-    kd=0.6,
-    min_rate=10,
-    angle_tol=0.3,
-    speed_tol=0.2,
-    max_time=3670
-):
     last_error = 0
-    dt = 0.01
     timer = StopWatch()
     timer.reset()
-
+    
+    last_time = timer.time()
+    
     while timer.time() < max_time:
         current = hub.imu.heading()
-
+        
         # Shortest angle wraparound
         error = ((target - current + 180) % 360) - 180
-        d_error = (error - last_error) / dt
-
-        # Dynamic max turn rate based on remaining error
-        dynamic_max = max(min_rate, min(max_rate, abs(error) * 2))
-
+        
+        # Real dt
+        now = timer.time()
+        dt = (now - last_time) / 1000.0  # convert ms to seconds
+        last_time = now
+        
+        if dt == 0:
+            dt = 0.001  # avoid division by zero
+        
         # PD control
+        d_error = (error - last_error) / dt
         turn_rate = kp * error + kd * d_error
-
+        
+        # Add static bias to overcome motor deadzone
+        if turn_rate > 0:
+            turn_rate += ke
+        elif turn_rate < 0:
+            turn_rate -= ke
+        
         # Clamp turn rate
-        turn_rate = max(-dynamic_max, min(dynamic_max, turn_rate))
-
+        turn_rate = max(-max_rate, min(max_rate, turn_rate))
+        
         cutie.drive(0, turn_rate)
-
-        # Exit condition
+        
+        # Exit condition: close enough and slow enough
         if abs(error) < angle_tol and abs(turn_rate) < speed_tol:
             break
-
+        
         last_error = error
-        wait(10)
-
+        wait(10)  # smaller wait for faster updates
+    print(timer.time())
     cutie.stop()
+    wait(200)
 
-gyro_turn(90,)
+
+
 
 def turn_to(angle, then=Stop.HOLD): #turn using pybricks's function
     start_angle = (hub.imu.heading() + 360) % 360 #cal
@@ -165,13 +222,23 @@ def gyro_abs(target_angle, speed=100, kp=1.5, ke = 20):
     wait(200)
     
 
+# cheks for the turn of the robot PD vs SHITTERY
+# timer = StopWatch()
+# timer.reset()
+# gyro_turn(90)
+# print(hub.imu.heading())
+# print(timer.time())
+# timer.reset()
+# gyro_abs(180)
+# print(hub.imu.heading())
+# print(timer.time())
+
 
 def run1():
     #MERKAVA!!!!!
     # cutie.settings(straight_speed = 1000) #set speed to 1000
     # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
     # straight_time(speed = 1000, time = 3000) #straight time
-    # wait(100)
     # cutie.settings(150, turn_rate = 40) #apply settings
     # cutie.use_gyro(True)
 
@@ -179,30 +246,29 @@ def run1():
     cutie.settings(200)
     till_yellow(-100, 0)
     cutie.straight(-50)
-    gyro_abs(0, 250, ke=25)
-    cutie.settings(200)
+    gyro_turn(0)
+    cutie.settings(300)
     cutie.curve(-450, -30)
-    gyro_abs(0, 150, ke=5)
+    gyro_turn(0)
     cutie.settings(400)
     cutie.straight(-550)
     cutie.settings(turn_acceleration = 200)
-    right_motor.run_time(speed=300, time=5000, wait=False)
     cutie.use_gyro(False)
-    cutie.settings(200, turn_rate=70)
+    cutie.settings(200, turn_rate=400)
     turn_to(90)
-    straight_time(-200, 2000)
+    right_motor.run_time(speed=300, time=3000, wait=False)
+    straight_time(-250, 1600)
     hub.imu.reset_heading(90)
     
     cutie.settings(turn_rate=70, straight_speed= 80)
-    right_motor.run_angle(-160, 150, wait=False)
     cutie.straight(20)
-    gyro_abs(0, 30, kp = 2, ke=5)
+    gyro_turn(0)
     cutie.use_gyro(True)
-    till_black(65, 0)
+    till_black(100, 0)
     cutie.straight(10)
     left_motor.run_time(-2000, 3500, wait=False)
-    right_motor.run_angle(-160, 400)
-    right_motor.run_time(200, 2000)
+    right_motor.run_angle(-160, 600)
+    right_motor.run_until_stalled(200, duty_limit=40)
     right_motor.run_angle(-160, 120)
     cutie.settings(turn_rate=70, straight_speed= 150)
     gyro_abs(0, 250, ke=25)
@@ -212,14 +278,12 @@ def run1():
     gyro_abs(0, 250, ke=25)
     cutie.straight(-120)
     cutie.straight(60)
-    cutie.turn(50)
-    cutie.turn(-80)
+    cutie.turn(-30)
     cutie.straight(50)
     cutie.straight(-110)
     cutie.settings(straight_speed= 400, turn_rate=200)
     turn_to(-90)
     cutie.settings(1000)
-    
     cutie.curve(-700, -60, then=Stop.NONE)
     cutie.straight(-600)
     # yiftach was here, dont tell anyone
