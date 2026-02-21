@@ -32,7 +32,13 @@ sensor2.detectable_colors(color_list)
 cutie.use_gyro(True)
 
 
-def straight_time(speed, time):  # Go straight for a certian time
+def straight_time(speed, time):
+    """Move straight for a specified duration.
+    
+    Args:
+        speed (int): Speed at which to move (positive or negative).
+        time (int): Duration to move in milliseconds.
+    """
     timer = StopWatch()  # Start stopwatch
     last = cutie.settings()[0]  # saves speed
     cutie.settings(speed)  # define speed
@@ -47,7 +53,13 @@ def straight_time(speed, time):  # Go straight for a certian time
     cutie.settings(last)  # return speed
 
 
-def curve_time(time, angle):  # Go curve for a certian time
+def curve_time(time, angle):
+    """Drive in a curve for a specified duration.
+    
+    Args:
+        time (int): Duration to drive in milliseconds.
+        angle (float): Turn rate for the curve.
+    """
     timer = StopWatch()  # Start stopwatch
 
     while timer.time() < time:  # while time not reached, go curve
@@ -55,7 +67,13 @@ def curve_time(time, angle):  # Go curve for a certian time
     cutie.stop()  # cutie stops
 
 
-def till_black(speed, turn_rate):  # go straight until line
+def till_black(speed, turn_rate):
+    """Drive until a black line is detected on the color sensor.
+    
+    Args:
+        speed (int): Speed at which to drive.
+        turn_rate (float): Turn rate while driving.
+    """
     cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
 
     while sensor2.reflection() > 7:  # while refelction over 7, continue driving
@@ -94,7 +112,13 @@ def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
         wait(poll_ms)
 
 
-def till_yellow(speed, turn_rate):  # go straight until line
+def till_yellow(speed, turn_rate):
+    """Drive until the yellow block on the ramp is detected on the color sensor.
+    
+    Args:
+        speed (int): Speed at which to drive.
+        turn_rate (float): Turn rate while driving.
+    """
     cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
 
     while sensor2.color() != CUSTOM_YELLOW:
@@ -103,9 +127,16 @@ def till_yellow(speed, turn_rate):  # go straight until line
     cutie.stop()  # Stop
 
 
-def going_down(
-    speed, turn_rate
-):  # go till the yellow line and then wait for the robot to be stable (not tilted) to continue
+def going_down(speed, turn_rate):
+    """Drive to the yellow line and wait for the robot to stabilize.
+    
+    Drives until the yellow line is detected, then continues driving while
+    waiting for the roll (tilt) to stabilize before continuing.
+    
+    Args:
+        speed (int): Speed at which to drive.
+        turn_rate (float): Turn rate while driving.
+    """
     till_yellow(speed, turn_rate)
     print("yellow")
     cutie.drive(speed, turn_rate)
@@ -163,11 +194,26 @@ def gyro_turn(
     max_rate=1000,
     kp=5.0,
     kd=0.6,
-    ke=20,  # static bias to overcome friction
+    ke=20,
     angle_tol=0.3,
     speed_tol=100,
     max_time=2670,
 ):
+    """Turn the robot to a target heading using gyro-based PD control.
+    
+    Uses the IMU gyroscope and PD (proportional-derivative) control with a static
+    bias to overcome motor friction and achieve precise heading control.
+    
+    Args:
+        target (float): Target heading in degrees.
+        max_rate (int): Maximum turn rate in degrees/second (default 1000).
+        kp (float): Proportional gain constant (default 5.0).
+        kd (float): Derivative gain constant (default 0.6).
+        ke (int): Static bias to overcome motor friction (default 20).
+        angle_tol (float): Angle tolerance threshold in degrees (default 0.3).
+        speed_tol (int): Turn rate tolerance threshold (default 100).
+        max_time (int): Maximum time to attempt turn in milliseconds (default 2670).
+    """
 
     last_error = 0
     timer = StopWatch()
@@ -215,7 +261,15 @@ def gyro_turn(
     wait(200)
 
 
-def turn_to(angle, then=Stop.HOLD):  # turn using pybricks's function
+def turn_to(angle, then=Stop.HOLD):
+    """Turn the robot to a specific absolute angle.
+    
+    Uses PyBricks' built-in turn function to rotate to the target angle.
+    
+    Args:
+        angle (float): Target absolute angle in degrees.
+        then (Stop): Stop behavior after turning (default Stop.HOLD).
+    """
     start_angle = (hub.imu.heading() + 360) % 360  # cal
     deg_to_turn = (angle - start_angle) % 360  # calculate how much need to turn
     if then == Stop.NONE:
@@ -231,6 +285,13 @@ def turn_to(angle, then=Stop.HOLD):  # turn using pybricks's function
 
 
 def gyro_abs(target_angle, kp=1.5, ke=20):
+    """Turn to an absolute angle using gyro-based proportional control.
+    
+    Args:
+        target_angle (float): Target absolute angle in degrees.
+        kp (float): Proportional gain constant (default 1.5).
+        ke (int): Static bias to overcome motor friction (default 20).
+    """
 
     while True:
         error = (
@@ -266,10 +327,12 @@ def gyro_abs(target_angle, kp=1.5, ke=20):
 
 
 def run1():
+    """Execute the first robot run sequence.
+    """
     # MERKAVA!!!!!
-    # cutie.settings(straight_speed = 1000) #set speed to 1000
-    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    # straight_time(speed = 1000, time = 3000) #straight time
+    cutie.settings(straight_speed = 1000) #set speed to 1000
+    cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    straight_time(speed = 1000, time = 3000) #straight time
     cutie.settings(150, turn_rate=40)  # apply settings
     cutie.use_gyro(True)
 
@@ -322,6 +385,8 @@ def run1():
 
 
 def run2():
+    """Execute the second robot run sequence.
+    """
     curve_time(3000, 5)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
     cutie.settings(400)
@@ -367,6 +432,8 @@ def run2():
 
 
 def run3():
+    """Execute the third robot run sequence.
+    """
     cutie.settings(straight_speed=1000)  #
     cutie.straight(distance=300, then=Stop.NONE)  # go straight
     cutie.settings(straight_speed=300)
@@ -385,6 +452,8 @@ def run3():
 
 
 def run4():
+    """Execute the fourth robot run sequence.
+    """
     cutie.settings(straight_speed=500, straight_acceleration=350)
     left_motor.run_until_stalled(-1100)
     cutie.straight(650)
@@ -398,6 +467,8 @@ def run4():
 
 
 def victory_dance():
+    """Execute a victory dance after finishing all missions.
+    """
     # TODO: add rythem and music
     # go to another place to not destroy back lines (turn than drive)
     cutie.drive(0, 360)
@@ -407,6 +478,14 @@ def victory_dance():
 
 # GetOut()
 def cycle(iterable):
+    """Continuously cycle through an iterable, restarting when exhausted.
+    
+    Args:
+        iterable: An iterable to cycle through.
+        
+    Yields:
+        Elements from the iterable, repeating infinitely.
+    """
     iterator = iter(iterable)
     while True:
         try:
