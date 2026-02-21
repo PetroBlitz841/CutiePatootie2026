@@ -330,23 +330,25 @@ def run1():
     """Execute the first robot run sequence.
     """
     # MERKAVA!!!!!
-    cutie.settings(straight_speed = 1000) #set speed to 1000
-    cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    straight_time(speed = 1000, time = 3000) #straight time
+    # cutie.settings(straight_speed = 1000) #set speed to 1000
+    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    # straight_time(speed = 1000, time = 3000) #straight time
+
     cutie.settings(150, turn_rate=40)  # apply settings
     cutie.use_gyro(True)
 
     # GOING DOWN
-    cutie.settings(200)
+    cutie.settings(600)
+    cutie.straight(-100) # speedy straight before controlled descent
     going_down(-100, 0)
-
-    cutie.straight(-50)
     gyro_turn(0)
+    cutie.settings(200)
+    cutie.straight(-50)
     cutie.settings(300)
     cutie.curve(-450, -30)
     gyro_turn(0)
     cutie.settings(400)
-    cutie.straight(-550)
+    cutie.straight(-530)
     cutie.settings(turn_acceleration=200)
     cutie.use_gyro(False)
     cutie.settings(200, turn_rate=400)
