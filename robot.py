@@ -19,11 +19,16 @@ sensor2 = ColorSensor(Port.B) #cyan
 
 cutie = DriveBase(left_wheel, right_wheel, wheel_diameter = 62.4,axle_track= 80)
 
+CUSTOM_RED = Color(343, 82, 36)
+CUSTOM_BLUE = Color(216, 88, 27)
+CUSTOM_GREEN = Color(156, 72, 19)
+CUSTOM_YELLOW = Color(51, 75, 71)
+
 color_list = [
-    Color(343, 82, 36),  # red
-    Color(216, 88, 27),  # blue
-    Color(156, 72, 19),  # green
-    Color(51, 75, 71),  # yellow
+    CUSTOM_RED,
+    CUSTOM_YELLOW,
+    CUSTOM_BLUE,
+    CUSTOM_GREEN
 ]
 
 run_colors = (Color.RED, Color. YELLOW, Color.BLUE, Color.GREEN)
@@ -60,30 +65,49 @@ def till_black(speed, turn_rate): #go straight until line
 
     cutie.stop() #Stop
 
-def till_roll(speed, turn_rate, roll): #go straight until 
-    cutie.drive(speed= speed, turn_rate=turn_rate)
-    
-    while hub.imu.tilt()[1]!=roll: #while roll not 0
-        print(hub.imu.tilt()[1])
-        pass
+def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
+    """Poll `hub.imu.tilt()[1]` continuously and keep the last
+    `window_size` readings in a FIFO list. When the average of the
+    window is within [-tol, tol], stop the robot (`cutie.stop()`) and
+    return the averaged value.
 
-    cutie.stop() #Stop
+    Args:
+        window_size (int): number of readings to keep (default 10).
+        poll_ms (int): milliseconds to wait between polls (default 30).
+        tol (float): tolerance threshold for average (default 1).
+    Returns:
+        float: the average of the last `window_size` readings when stopped.
+    """
+    readings = []
+    while True:
+        r = hub.imu.tilt()[1]
+        readings.append(r)
+        if len(readings) > window_size:
+            readings.pop(0)
+
+        if len(readings) == window_size:
+            avg = sum(readings) / float(window_size)
+            # print("tilt_avg:", avg)
+            if -tolerance <= avg <= tolerance:
+                cutie.stop()
+                return avg
+
+        wait(poll_ms)
 
 def till_yellow(speed, turn_rate): #go straight until line
     cutie.drive(speed= speed, turn_rate=turn_rate) #start driving
 
-    while sensor2.reflection() < 30 or sensor2.reflection()>32: #while refelction over 7, continue driving
+    while sensor2.color() != CUSTOM_YELLOW:
         pass
 
     cutie.stop() #Stop
 
-def going_down(speed, turn_rate): #go straight until line
-    cutie.drive(speed= speed, turn_rate=turn_rate) #start driving
-
-    while hub.imu.tilt()[1]!=0 and (sensor2.reflection() < 30 or sensor2.reflection()>32): #while roll not 0
-        pass
-
-    cutie.stop() #Stop
+def going_down(speed, turn_rate): # go till the yellow line and then wait for the robot to be stable (not tilted) to continue
+    till_yellow(speed, turn_rate)
+    print("yellow")
+    cutie.drive(speed, turn_rate)
+    wait_for_stable_roll()
+    print("roll 0")
 
 # old  
 # def gyro_turn(
@@ -239,12 +263,13 @@ def run1():
     # cutie.settings(straight_speed = 1000) #set speed to 1000
     # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
     # straight_time(speed = 1000, time = 3000) #straight time
-    # cutie.settings(150, turn_rate = 40) #apply settings
-    # cutie.use_gyro(True)
+    cutie.settings(150, turn_rate = 40) #apply settings
+    cutie.use_gyro(True)
 
     # GOING DOWN
     cutie.settings(200)
-    till_yellow(-100, 0)
+    going_down(-100, 0)
+
     cutie.straight(-50)
     gyro_turn(0)
     cutie.settings(300)
