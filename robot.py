@@ -1,6 +1,6 @@
 from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import Motor, ColorSensor
-from pybricks.parameters import Color, Direction, Port, Stop
+from pybricks.parameters import Button, Color, Direction, Port, Stop
 from pybricks.robotics import DriveBase
 from pybricks.tools import StopWatch, hub_menu, wait
 
@@ -109,11 +109,17 @@ def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
                 cutie.stop()
                 return avg
 
-        wait(poll_ms)
+        wait(poll_ms50)
+
+
+def wait_for_right_arrow():
+    """Wait until the right arrow button is pressed on the hub."""
+    while Button.RIGHT not in hub.buttons.pressed():
+        wait(100)
 
 
 def till_yellow(speed, turn_rate):
-    """Drive until the yellow block on the ramp is detected on the color sensor.
+    """Drive until the yellow block on the merkava is detected on the color sensor.
     
     Args:
         speed (int): Speed at which to drive.
@@ -142,51 +148,6 @@ def going_down(speed, turn_rate):
     cutie.drive(speed, turn_rate)
     wait_for_stable_roll()
     print("roll 0")
-
-
-# old
-# def gyro_turn(
-#     target,
-#     max_rate=1000,
-#     kp=3.0,
-#     kd=0.8,
-#     min_rate=10,
-#     angle_tol=0.3,
-#     speed_tol=10000,
-#     max_time=2670
-# ):
-#     last_error = 0
-#     dt = 0.01
-#     timer = StopWatch()
-#     timer.reset()
-
-#     while timer.time() < max_time:
-#         current = hub.imu.heading()
-
-#         # Shortest angle wraparound
-#         error = ((target - current + 180) % 360) - 180
-#         d_error = (error - last_error) / dt
-
-#         # Dynamic max turn rate based on remaining error
-#         dynamic_max = max(min_rate, min(max_rate, abs(error) * 3))
-
-#         # PD control
-#         turn_rate = kp * error + kd * d_error
-
-#         # Clamp turn rate
-#         turn_rate = max(-dynamic_max, min(dynamic_max, turn_rate))
-
-#         cutie.drive(0, turn_rate)
-
-#         # Exit condition
-#         if abs(error) < angle_tol and abs(turn_rate) < speed_tol:
-#             break
-
-#         last_error = error
-#         wait(10)
-
-#     cutie.stop()
-#     wait(200)
 
 
 def gyro_turn(
