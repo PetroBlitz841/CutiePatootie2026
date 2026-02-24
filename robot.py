@@ -351,22 +351,22 @@ def run1():
     # cutie.settings(150, turn_rate=40)  # apply settings
     # cutie.use_gyro(True)
 
-    # # GOING DOWN
-    # cutie.settings(600)
-    # cutie.straight(-100) # speedy straight before controlled descent
-    # going_down(-100, 0)
-    # gyro_turn(0)
-    # cutie.settings(200)
-    # cutie.straight(-50)
-    # cutie.settings(300)
-    # cutie.curve(-450, -30)
-    # gyro_turn(0)
-    # cutie.settings(400)
-    # cutie.straight(-530)
-    # cutie.settings(turn_acceleration=200)
-    # cutie.use_gyro(False)
-    # cutie.settings(200, turn_rate=400)
-    # cutie.turn(90)
+    # GOING DOWN
+    cutie.settings(600)
+    cutie.straight(-100) # speedy straight before controlled descent
+    going_down(-100, 0)
+    gyro_turn(0)
+    cutie.settings(200)
+    cutie.straight(-50)
+    cutie.settings(300)
+    cutie.curve(-450, -30)
+    gyro_turn(0)
+    cutie.settings(400)
+    cutie.straight(-530)
+    cutie.settings(turn_acceleration=200)
+    cutie.use_gyro(False)
+    cutie.settings(200, turn_rate=400)
+    cutie.turn(90)
     left_motor.run_time(speed=-300, time=3000, wait=False)
     right_motor.run_time(speed=300, time=3000, wait=False)
     straight_time(-250, 1600)
@@ -377,16 +377,17 @@ def run1():
     gyro_turn(0, kp=3)
     cutie.use_gyro(True)
     till_black(100, 0)
-    cutie.straight(10)
+    cutie.straight(-10)
     left_motor.run_time(2000, 2000, wait=False)
     right_motor.run_time(-300, 2000)
-    left_motor.run_time(-2000, 1000, wait=False)
-    left_motor.run_angle(100, 10)
+    left_motor.run_time(2000, 500, wait=False)
+    left_motor.run_angle(100, 6)
 
     cutie.settings(turn_rate=70, straight_speed=150)
     gyro_turn(0, kp=2)
     cutie.straight(-170)
-    right_motor.run_angle(-800, 500)
+    left_motor.run_time(1000, 5000, wait=False)
+    wait(2000)
     cutie.straight(120)
     gyro_abs(0, 250, ke=25)
     cutie.straight(-120)
@@ -416,16 +417,16 @@ def run2():
     cutie.straight(50)
     till_black(100, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
-    cutie.straight(50)
-    gyro_abs(-90, 250, ke=25) #turn to mission
+    cutie.straight(70)
+    gyro_abs(-90, ke=25) #turn to mission
     till_black(-90, 0) #go to misiion using black line
     cutie.straight(-40)
-    turn_time(-100, 800) #turn to gear
-    right_motor.run_time(-1000, 3000) #turn gear (lift up items)
+    turn_time(-100, 300) #turn to gear
+    right_motor.run_time(-1000, 4000) #turn gear (lift up items)
     cutie.use_gyro(True)
-    gyro_abs(-90, 250, ke=25) #fix up
+    gyro_abs(-90, ke=25) #fix up
     cutie.settings(200)
-    cutie.straight(30)
+    # cutie.straight(30)
     till_black(100, 0)
     cutie.straight(100)
     gyro_abs(0, ke=20)
