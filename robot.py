@@ -53,6 +53,20 @@ def straight_time(speed, time):
     cutie.settings(last)  # return speed
 
 
+def turn_time(speed, time):
+    timer = StopWatch() #Start stopwatch
+    last = cutie.settings()[2] #saves speed
+    cutie.settings(speed) #define speed
+
+    while timer.time() < time: 
+        if speed > 0:
+            cutie.turn(1000, wait=False)
+        else:
+            cutie.turn(-1000, wait=False)
+    cutie.stop()
+
+    cutie.settings(last) 
+
 def curve_time(time, angle):
     """Drive in a curve for a specified duration.
     
@@ -393,8 +407,8 @@ def run2():
     """
     curve_time(3000, 5)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
-    cutie.settings(400)
-    cutie.straight(-500, then=Stop.NONE)  # go back
+    cutie.settings(400) 
+    cutie.straight(-450, then=Stop.NONE)  # go back
     cutie.use_gyro(True)
     cutie.curve(500, -25, then=Stop.NONE)
     cutie.straight(450)
@@ -403,14 +417,14 @@ def run2():
     till_black(100, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
     cutie.straight(50)
-    gyro_abs(-90, ke=25)  # turn to mission
-    till_black(-100, 0)  # go to misiion using black line
+    gyro_abs(-90, 250, ke=25) #turn to mission
+    till_black(-90, 0) #go to misiion using black line
     cutie.straight(-40)
-    cutie.turn(-30)  # turn to gear
-    right_motor.run_time(-1000, 3000)  # turn gear (lift up items)
+    turn_time(-100, 800) #turn to gear
+    right_motor.run_time(-1000, 3000) #turn gear (lift up items)
     cutie.use_gyro(True)
-    gyro_abs(-90, ke=25)  # fix up
-    cutie.settings(80)
+    gyro_abs(-90, 250, ke=25) #fix up
+    cutie.settings(200)
     cutie.straight(30)
     till_black(100, 0)
     cutie.straight(100)
@@ -418,7 +432,7 @@ def run2():
     till_black(-100, 0)
     cutie.straight(195)
     cutie.straight(-100)
-    cutie.settings(210)
+    cutie.settings(300)
     cutie.turn(45)
     cutie.straight(40, then=Stop.NONE)
     cutie.curve(60, -45, then=Stop.NONE)
