@@ -133,7 +133,7 @@ def wait_for_right_arrow():
 
 
 def till_yellow(speed, turn_rate):
-    """Drive until the yellow block on the merkava is detected on the color sensor.
+    """Drive until the yellow block on the ramp is detected on the color sensor.
     
     Args:
         speed (int): Speed at which to drive.
@@ -166,12 +166,12 @@ def going_down(speed, turn_rate):
 
 def gyro_turn(
     target,
-    max_rate=1000,
-    kp=5.0,
+    max_rate=150,
+    kp=2.1,
     kd=0.6,
-    ke=20,
+    ke=16,
     angle_tol=0.3,
-    speed_tol=100,
+    speed_tol=30,
     max_time=2670,
 ):
     """Turn the robot to a target heading using gyro-based PD control.
@@ -335,7 +335,7 @@ def run1():
 
     cutie.settings(turn_rate=70, straight_speed=80)
     cutie.straight(20)
-    gyro_turn(0, kp=3)
+    gyro_turn(0)
     cutie.use_gyro(True)
     till_black(100, 0)
     cutie.straight(-10)
@@ -345,7 +345,7 @@ def run1():
     left_motor.run_angle(100, 6)
 
     cutie.settings(turn_rate=70, straight_speed=150)
-    gyro_turn(0, kp=2)
+    gyro_turn(0)
     cutie.straight(-170)
     left_motor.run_time(1000, 5000, wait=False)
     wait(2000)
