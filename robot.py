@@ -375,19 +375,18 @@ def run2():
     cutie.curve(500, -25, then=Stop.NONE)
     cutie.straight(450)
     gyro_abs(0, ke=25)
-    cutie.straight(50)
+    cutie.straight(60)
     till_black(100, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
-    cutie.straight(70)
+    cutie.straight(45)
     gyro_abs(-90, ke=25) #turn to mission
     till_black(-90, 0) #go to misiion using black line
-    cutie.straight(-40)
-    turn_time(-100, 300) #turn to gear
+    cutie.straight(-60)
+    turn_time(-100, 500) #turn to gear
     right_motor.run_time(-1000, 4000) #turn gear (lift up items)
     cutie.use_gyro(True)
     gyro_abs(-90, ke=25) #fix up
     cutie.settings(200)
-    # cutie.straight(30)
     till_black(100, 0)
     cutie.straight(100)
     gyro_abs(0, ke=20)
