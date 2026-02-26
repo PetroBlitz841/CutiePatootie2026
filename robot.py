@@ -123,7 +123,7 @@ def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
                 cutie.stop()
                 return avg
 
-        wait(poll_ms50)
+        wait(poll_ms)
 
 
 def wait_for_right_arrow():
