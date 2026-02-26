@@ -53,19 +53,20 @@ def straight_time(speed, time):
     cutie.settings(last)  # return speed
 
 
-def turn_time(speed, time):
-    timer = StopWatch() #Start stopwatch
-    last = cutie.settings()[2] #saves speed
-    cutie.settings(speed) #define speed
+def turn_time(turn_rate, time):
+    """Turns the robot in place for a specified duration.
 
-    while timer.time() < time: 
-        if speed > 0:
-            cutie.turn(1000, wait=False)
-        else:
-            cutie.turn(-1000, wait=False)
+    Args:
+        turn_rate (int): Turn rate to apply. Positive values turn right, negative values turn left.
+        time (int): Duration of the turn in milliseconds.
+\    """
+    timer = StopWatch()
+    timer.reset()
+
+    cutie.drive(0, turn_rate)
+    while timer.time() < time:
+        wait(10)
     cutie.stop()
-
-    cutie.settings(last) 
 
 def curve_time(time, angle):
     """Drive in a curve for a specified duration.
@@ -300,7 +301,7 @@ def gyro_abs(target_angle, kp=1.5, ke=20):
 # print(hub.imu.heading())
 # print(timer.time())
 
-
+# left_motor.run_time(2000, 2000)
 def run1():
     """Execute the first robot run sequence.
     """
@@ -313,24 +314,24 @@ def run1():
     # cutie.use_gyro(True)
 
     # GOING DOWN
-    cutie.settings(600)
-    cutie.straight(-100) # speedy straight before controlled descent
-    going_down(-100, 0)
-    gyro_turn(0)
-    cutie.settings(200)
-    cutie.straight(-50)
-    cutie.settings(300)
-    cutie.curve(-450, -30)
-    gyro_turn(0)
-    cutie.settings(400)
-    cutie.straight(-530)
-    cutie.settings(turn_acceleration=200)
-    cutie.use_gyro(False)
-    cutie.settings(200, turn_rate=400)
+    # cutie.settings(600)
+    # cutie.straight(-100) # speedy straight before controlled descent
+    # going_down(-100, 0)
+    # gyro_turn(0)
+    # cutie.settings(200)
+    # cutie.straight(-50)
+    # cutie.settings(300)
+    # cutie.curve(-450, -30)
+    # gyro_turn(0)
+    # cutie.settings(400)
+    # cutie.straight(-530)
+    # cutie.settings(turn_acceleration=200)
+    # cutie.use_gyro(False)
+    # cutie.settings(200, turn_rate=400)
     cutie.turn(90)
     left_motor.run_time(speed=-300, time=3000, wait=False)
-    right_motor.run_time(speed=300, time=3000, wait=False)
     straight_time(-250, 1600)
+    right_motor.run_time(speed=-300, time=3000, wait=False)
     hub.imu.reset_heading(90)
 
     cutie.settings(turn_rate=70, straight_speed=80)
@@ -339,14 +340,14 @@ def run1():
     cutie.use_gyro(True)
     till_black(100, 0)
     cutie.straight(-10)
-    left_motor.run_time(2000, 2000, wait=False)
+    right_motor.run_time(300, 2000)
     right_motor.run_time(-300, 2000)
-    left_motor.run_time(2000, 500, wait=False)
-    left_motor.run_angle(100, 6)
+    left_motor.run_time(2000, 2000)
 
     cutie.settings(turn_rate=70, straight_speed=150)
     gyro_turn(0)
     cutie.straight(-170)
+    right_motor.run_time(1000, 2000, wait=False)
     left_motor.run_time(1000, 5000, wait=False)
     wait(2000)
     cutie.straight(120)
@@ -374,30 +375,31 @@ def run2():
     cutie.use_gyro(True)
     cutie.curve(500, -25, then=Stop.NONE)
     cutie.straight(450)
-    gyro_abs(0, ke=25)
+    gyro_turn(0)
     cutie.straight(60)
     till_black(100, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
     cutie.straight(45)
     gyro_abs(-90, ke=25) #turn to mission
     till_black(-90, 0) #go to misiion using black line
-    cutie.straight(-60)
-    turn_time(-100, 500) #turn to gear
-    right_motor.run_time(-1000, 4000) #turn gear (lift up items)
+    cutie.straight(-40)
+    right_motor.run_time(-1000, 2800, wait=False) #turn gear (lift up items)
+    turn_time(-30, 2800) #turn to gear while turning
     cutie.use_gyro(True)
+    cutie.straight(35)
     gyro_abs(-90, ke=25) #fix up
     cutie.settings(200)
     till_black(100, 0)
     cutie.straight(100)
-    gyro_abs(0, ke=20)
+    gyro_turn(0)
     till_black(-100, 0)
     cutie.straight(195)
     cutie.straight(-100)
     cutie.settings(300)
     cutie.turn(45)
-    cutie.straight(40, then=Stop.NONE)
+    cutie.straight(50, then=Stop.NONE)
     cutie.curve(60, -45, then=Stop.NONE)
-    cutie.straight(510)
+    cutie.straight(470)
     right_motor.run_time(-200, 2000, wait=False)
     gyro_abs(45)
     cutie.straight(-200)
