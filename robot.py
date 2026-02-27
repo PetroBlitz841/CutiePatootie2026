@@ -32,6 +32,12 @@ sensor2.detectable_colors(color_list)
 cutie.use_gyro(True)
 
 
+def wait_for_right_arrow():
+    """Wait until the right arrow button is pressed on the hub."""
+    while Button.RIGHT not in hub.buttons.pressed():
+        wait(100)
+
+
 def straight_time(speed, time):
     """Move straight for a specified duration.
     
@@ -39,18 +45,9 @@ def straight_time(speed, time):
         speed (int): Speed at which to move (positive or negative).
         time (int): Duration to move in milliseconds.
     """
-    timer = StopWatch()  # Start stopwatch
-    last = cutie.settings()[0]  # saves speed
-    cutie.settings(speed)  # define speed
-
-    while timer.time() < time:  # while timer not reached, go straight
-        if speed > 0:
-            cutie.straight(1000, wait=False)
-        else:
-            cutie.straight(-1000, wait=False)
+    cutie.drive(speed, 0)
+    wait(time)
     cutie.stop()
-
-    cutie.settings(last)  # return speed
 
 
 def turn_time(turn_rate, time):
@@ -60,26 +57,22 @@ def turn_time(turn_rate, time):
         turn_rate (int): Turn rate to apply. Positive values turn right, negative values turn left.
         time (int): Duration of the turn in milliseconds.
     """
-    timer = StopWatch()
-    timer.reset()
-
     cutie.drive(0, turn_rate)
-    while timer.time() < time:
-        wait(10)
+    wait(time)
     cutie.stop()
 
-def curve_time(time, angle):
+
+def curve_time(time, turn_rate):
     """Drive in a curve for a specified duration.
     
     Args:
         time (int): Duration to drive in milliseconds.
         angle (float): Turn rate for the curve.
     """
-    timer = StopWatch()  # Start stopwatch
-
-    while timer.time() < time:  # while time not reached, go curve
-        cutie.drive(speed=cutie.settings()[0], turn_rate=angle)
-    cutie.stop()  # cutie stops
+    speed = cutie.settings()[0]
+    cutie.drive(speed, turn_rate)
+    wait(time)
+    cutie.stop()
 
 
 def till_black(speed, turn_rate):
@@ -92,16 +85,29 @@ def till_black(speed, turn_rate):
     cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
 
     while sensor2.reflection() > 7:  # while refelction over 7, continue driving
-        pass
+        wait(10)
 
     cutie.stop()  # Stop
 
 
+def till_yellow(speed, turn_rate):
+    """Drive until the yellow block on the ramp is detected on the color sensor.
+    
+    Args:
+        speed (int): Speed at which to drive.
+        turn_rate (float): Turn rate while driving.
+    """
+    cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
+
+    while sensor2.color() != CUSTOM_YELLOW:
+        wait(10)
+
+    cutie.stop()  # Stop
+
 def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
     """Poll the robot till continuously and keep the last
     `window_size` readings in a FIFO list. When the average of the
-    window is within the tolerance, stop the robot and
-    return the averaged value.
+    window is within the tolerance, return the averaged value.
 
     Args:
         window_size (int): number of readings to keep (default 10).
@@ -121,31 +127,9 @@ def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
             avg = sum(readings) / float(window_size)
             # print("tilt_avg:", avg)
             if -tolerance <= avg <= tolerance:
-                cutie.stop()
                 return avg
 
         wait(poll_ms)
-
-
-def wait_for_right_arrow():
-    """Wait until the right arrow button is pressed on the hub."""
-    while Button.RIGHT not in hub.buttons.pressed():
-        wait(100)
-
-
-def till_yellow(speed, turn_rate):
-    """Drive until the yellow block on the ramp is detected on the color sensor.
-    
-    Args:
-        speed (int): Speed at which to drive.
-        turn_rate (float): Turn rate while driving.
-    """
-    cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
-
-    while sensor2.color() != CUSTOM_YELLOW:
-        pass
-
-    cutie.stop()  # Stop
 
 
 def going_down(speed, turn_rate):
@@ -162,6 +146,7 @@ def going_down(speed, turn_rate):
 
     cutie.drive(speed, turn_rate)
     wait_for_stable_roll()
+    cutie.stop()
 
 
 def gyro_turn(
@@ -213,16 +198,11 @@ def gyro_turn(
         # PD control
         d_error = (error - last_error) / dt
         turn_rate = kp * error + kd * d_error
-
         # Add static bias to overcome motor deadzone
-        if turn_rate > 0:
-            turn_rate += ke
-        elif turn_rate < 0:
-            turn_rate -= ke
+        turn_rate += ke if turn_rate > 0 else -ke
 
         # Clamp turn rate
         turn_rate = max(-max_rate, min(max_rate, turn_rate))
-
         cutie.drive(0, turn_rate)
 
         # Exit condition: close enough and slow enough
@@ -457,7 +437,6 @@ def victory_dance():
         wait(100)
 
 
-# GetOut()
 def cycle(iterable):
     """Continuously cycle through an iterable, restarting when exhausted.
     
@@ -476,51 +455,18 @@ def cycle(iterable):
 
 
 sensor.detectable_colors(run_colors)
+run_map = {str(i+1): func for i, func in enumerate([run1, run2, run3, run4])}
+color_map = {color: str(i + 1) for i, color in enumerate(run_colors)}
+
 color_cycle = cycle(run_colors)
-color_map = {Color.RED: "1", Color.BLUE: "2", Color.GREEN: "3", Color.YELLOW: "4"}
 
 while sensor.color() != next(color_cycle):
     pass
 
-menu = [color_map[sensor.color()]]
-for i in range(len(run_colors) - 1):
-    menu.append(color_map[next(color_cycle)])
-
-
+menu = [color_map[current_color]] + [color_map[next(color_cycle)] for _ in range(len(run_colors) - 1)]
 selected = hub_menu(*menu)  # pylint: disable=assignment-from-no-return
-def play_rick():
-    # --- "Never gonna give you up" ---
-    hub.speaker.beep(392, 1000) # Nev- (Bb4)
-    hub.speaker.beep(440, 1000) # er (C5)
-    wait(120)
-    hub.speaker.beep(294, 750) # gon- (F4) - Lower note here is key!
-    hub.speaker.beep(440, 1000) # na (C5)
-    wait(120)
-    hub.speaker.beep(494, 1000) # give (D5)
-    wait(300)
-
-    # --- "Never gonna let you down" ---
-    hub.speaker.beep(587, 200) # Nev-
-    hub.speaker.beep(523, 200) # er
-    hub.speaker.beep(494, 200) # gon-
-    hub.speaker.beep(440, 200) # na
-    hub.speaker.beep(392, 1000) # Nev- (Bb4)
-    hub.speaker.beep(440, 1000) # er (C5)
-    wait(120)
-    hub.speaker.beep(294, 2000) # gon- (F4) - Lower note here is key!
-
-# play_rick()
 
 hub.speaker.beep(659, 0.5)   # E5
-if selected == "1":
-    hub.imu.reset_heading(0)
-    run1()
-elif selected == "2":
-    hub.imu.reset_heading(0)
-    run2()
-elif selected == "3":
-    hub.imu.reset_heading(0)
-    run3()
-elif selected == "4":
-    hub.imu.reset_heading(0)
-    run4()
+hub.imu.reset_heading(0)
+
+run_map[selected]()
