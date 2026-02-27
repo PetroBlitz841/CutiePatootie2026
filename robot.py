@@ -159,10 +159,9 @@ def going_down(speed, turn_rate):
         turn_rate (float): Turn rate while driving.
     """
     till_yellow(speed, turn_rate)
-    print("yellow")
+
     cutie.drive(speed, turn_rate)
     wait_for_stable_roll()
-    print("roll 0")
 
 
 def gyro_turn(
@@ -182,12 +181,12 @@ def gyro_turn(
     
     Args:
         target (float): Target heading in degrees.
-        max_rate (int): Maximum turn rate in degrees/second (default 1000).
-        kp (float): Proportional gain constant (default 5.0).
-        kd (float): Derivative gain constant (default 0.6).
-        ke (int): Static bias to overcome motor friction (default 20).
+        max_rate (int): Maximum turn rate in degrees/second (default 150).
+        kp (float): Proportional gain constant.
+        kd (float): Derivative gain constant.
+        ke (int): Static bias constant to overcome motor friction.
         angle_tol (float): Angle tolerance threshold in degrees (default 0.3).
-        speed_tol (int): Turn rate tolerance threshold (default 100).
+        speed_tol (int): Turn rate tolerance threshold (default 30).
         max_time (int): Maximum time to attempt turn in milliseconds (default 2670).
     """
 
@@ -232,7 +231,6 @@ def gyro_turn(
 
         last_error = error
         wait(10)  # smaller wait for faster updates
-    print(timer.time())
     cutie.stop()
     wait(200)
 
