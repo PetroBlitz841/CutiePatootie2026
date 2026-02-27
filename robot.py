@@ -59,7 +59,7 @@ def turn_time(turn_rate, time):
     Args:
         turn_rate (int): Turn rate to apply. Positive values turn right, negative values turn left.
         time (int): Duration of the turn in milliseconds.
-\    """
+    """
     timer = StopWatch()
     timer.reset()
 
