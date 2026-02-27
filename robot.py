@@ -98,14 +98,14 @@ def till_black(speed, turn_rate):
 
 
 def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
-    """Poll `hub.imu.tilt()[1]` continuously and keep the last
+    """Poll the robot till continuously and keep the last
     `window_size` readings in a FIFO list. When the average of the
-    window is within [-tol, tol], stop the robot (`cutie.stop()`) and
+    window is within the tolerance, stop the robot and
     return the averaged value.
 
     Args:
         window_size (int): number of readings to keep (default 10).
-        poll_ms (int): milliseconds to wait between polls (default 30).
+        poll_ms (int): milliseconds to wait between polls (default 10).
         tol (float): tolerance threshold for average (default 1).
     Returns:
         float: the average of the last `window_size` readings when stopped.
