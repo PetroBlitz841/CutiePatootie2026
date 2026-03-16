@@ -304,28 +304,28 @@ def run1():
     """Execute the first robot run sequence.
     """
     # MERKAVA!!!!!
-    # cutie.settings(straight_speed = 1000) #set speed to 1000
-    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    # straight_time(speed = 1000, time = 3000) #straight time
+    cutie.settings(straight_speed = 1000) #set speed to 1000
+    cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    straight_time(speed = 1000, time = 3000) #straight time
 
-    # cutie.settings(150, turn_rate=40)  # apply settings
-    # cutie.use_gyro(True)
+    cutie.settings(150, turn_rate=40)  # apply settings
+    cutie.use_gyro(True)
 
     # GOING DOWN
-    # cutie.settings(600)
-    # cutie.straight(-100) # speedy straight before controlled descent
-    # going_down(-100, 0)
-    # gyro_turn(0)
-    # cutie.settings(200)
-    # cutie.straight(-50)
-    # cutie.settings(300)
-    # cutie.curve(-450, -30)
-    # gyro_turn(0)
-    # cutie.settings(400)
-    # cutie.straight(-530)
-    # cutie.settings(turn_acceleration=200)
-    # cutie.use_gyro(False)
-    # cutie.settings(200, turn_rate=400)
+    cutie.settings(600)
+    cutie.straight(-100) # speedy straight before controlled descent
+    going_down(-100, 0)
+    gyro_turn(0)
+    cutie.settings(200)
+    cutie.straight(-50)
+    cutie.settings(300)
+    cutie.curve(-450, -30)
+    gyro_turn(0)
+    cutie.settings(400)
+    cutie.straight(-530)
+    cutie.settings(turn_acceleration=200)
+    cutie.use_gyro(False)
+    cutie.settings(200, turn_rate=400)
     cutie.turn(90)
     left_motor.run_time(speed=-300, time=3000, wait=False)
     straight_time(-250, 1600)
@@ -351,7 +351,7 @@ def run1():
     cutie.straight(120)
     gyro_abs(0, 250, ke=25)
     cutie.straight(-120)
-    cutie.straight(80)
+    cutie.straight(100)
     cutie.turn(-30)
     cutie.straight(50)
     cutie.straight(-110)
@@ -361,8 +361,6 @@ def run1():
     cutie.curve(-700, -60, then=Stop.NONE)
     cutie.straight(-600)
     # yiftach was here, dont tell anyone
-
-
 def run2():
     """Execute the second robot run sequence.
     """
@@ -380,34 +378,38 @@ def run2():
     cutie.straight(45)
     gyro_abs(-90, ke=25) #turn to mission
     till_black(-90, 0) #go to misiion using black line
-    cutie.straight(-40)
-    right_motor.run_time(-1000, 2800, wait=False) #turn gear (lift up items)
-    turn_time(-30, 2800) #turn to gear while turning
+    cutie.straight(-30)
+    turn_time(-30, 1000) #turn to gear while turning
+    right_motor.run_time(-1000, 3100) #turn gear (lift up items)
+    
     cutie.use_gyro(True)
-    cutie.straight(35)
+    cutie.straight(40)
     gyro_abs(-90, ke=25) #fix up
     cutie.settings(200)
-    till_black(100, 0)
+    till_black(80, 0)
     cutie.straight(100)
     gyro_turn(0)
+
     till_black(-100, 0)
     cutie.straight(195)
     cutie.straight(-100)
     cutie.settings(300)
     cutie.turn(45)
-    cutie.straight(50, then=Stop.NONE)
+    cutie.straight(60, then=Stop.NONE)
     cutie.curve(60, -45, then=Stop.NONE)
+    gyro_turn(0)
     cutie.straight(470)
     right_motor.run_time(-200, 2000, wait=False)
     gyro_abs(45)
     cutie.straight(-200)
+    cutie.straight(20)
     right_motor.run_time(200, 3000, wait=False)
-    left_motor.run_time(1500, 3000)
+    left_motor.run_time(200, 4000, wait=False)
+    wait(3000)
     cutie.straight(200)
     cutie.straight(-50)
-    left_motor.run_time(-500, 2000)
+    left_motor.run_time(-500, 3000)
     cutie.straight(1000)
-
 
 def run3():
     """Execute the third robot run sequence.
