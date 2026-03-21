@@ -31,6 +31,10 @@ sensor2.detectable_colors(color_list)
 
 cutie.use_gyro(True)
 
+def check_battery_percent():
+    v = hub.battery.voltage()  # Read battery voltage (mV)
+    percent = int((v - 7000) * 100 // 1200)  # Convert voltage to percentage
+    return percent
 
 def wait_for_right_arrow():
     """Wait until the right arrow button is pressed on the hub."""
@@ -284,28 +288,28 @@ def run1():
     """Execute the first robot run sequence.
     """
     # MERKAVA!!!!!
-    cutie.settings(straight_speed = 1000) #set speed to 1000
-    cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    straight_time(speed = 1000, time = 3000) #straight time
+    # cutie.settings(straight_speed = 1000) #set speed to 1000
+    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    # straight_time(speed = 1000, time = 3000) #straight time
 
-    cutie.settings(150, turn_rate=40)  # apply settings
-    cutie.use_gyro(True)
+    # cutie.settings(150, turn_rate=40)  # apply settings
+    # cutie.use_gyro(True)
 
-    # GOING DOWN
-    cutie.settings(600)
-    cutie.straight(-100) # speedy straight before controlled descent
-    going_down(-100, 0)
-    gyro_turn(0)
-    cutie.settings(200)
-    cutie.straight(-50)
-    cutie.settings(300)
-    cutie.curve(-450, -30)
-    gyro_turn(0)
-    cutie.settings(400)
-    cutie.straight(-530)
-    cutie.settings(turn_acceleration=200)
-    cutie.use_gyro(False)
-    cutie.settings(200, turn_rate=400)
+    # # GOING DOWN
+    # cutie.settings(600)
+    # cutie.straight(-100) # speedy straight before controlled descent
+    # going_down(-100, 0)
+    # gyro_turn(0)
+    # cutie.settings(200)
+    # cutie.straight(-50)
+    # cutie.settings(300)
+    # cutie.curve(-450, -30)
+    # gyro_turn(0)
+    # cutie.settings(400)
+    # cutie.straight(-530)
+    # cutie.settings(turn_acceleration=200)
+    # cutie.use_gyro(False)
+    # cutie.settings(200, turn_rate=400)
     cutie.turn(90)
     left_motor.run_time(speed=-300, time=3000, wait=False)
     straight_time(-250, 1600)
@@ -343,7 +347,7 @@ def run1():
     # yiftach was here, dont tell anyone
 def run2():
     """Execute the second robot run sequence.
-    """
+    # """
     curve_time(3000, 5)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
     cutie.settings(400) 
@@ -358,38 +362,37 @@ def run2():
     cutie.straight(45)
     gyro_abs(-90, ke=25) #turn to mission
     till_black(-90, 0) #go to misiion using black line
-    cutie.straight(-30)
+    cutie.straight(-75)
     turn_time(-30, 1000) #turn to gear while turning
     right_motor.run_time(-1000, 3100) #turn gear (lift up items)
     
     cutie.use_gyro(True)
-    cutie.straight(40)
-    gyro_abs(-90, ke=25) #fix up
+    cutie.straight(40) # drive away from crane
+    gyro_turn(-90) 
     cutie.settings(200)
-    till_black(80, 0)
-    cutie.straight(100)
+    till_black(80, 0) # go towards red home
+    cutie.straight(115)
     gyro_turn(0)
 
     till_black(-100, 0)
-    cutie.straight(195)
-    cutie.straight(-100)
     cutie.settings(300)
-    cutie.turn(45)
+    cutie.straight(195) # latch onto tray
+    cutie.straight(-100) # latch onto tray
+    cutie.turn(45) # remove tray
     cutie.straight(60, then=Stop.NONE)
     cutie.curve(60, -45, then=Stop.NONE)
     gyro_turn(0)
-    cutie.straight(470)
-    right_motor.run_time(-200, 2000, wait=False)
+    cutie.straight(500)
     gyro_abs(45)
-    cutie.straight(-200)
-    cutie.straight(20)
-    right_motor.run_time(200, 3000, wait=False)
-    left_motor.run_time(200, 4000, wait=False)
-    wait(3000)
-    cutie.straight(200)
-    cutie.straight(-50)
-    left_motor.run_time(-500, 3000)
-    cutie.straight(1000)
+    cutie.straight(-200) # reverse into market stall
+    left_motor.run_time(-500, 4500, wait=False)  # lower arm to lift stall
+    cutie.straight(40) 
+    wait(4000)
+    cutie.straight(200) # lift market stall
+    cutie.straight(-80)
+    left_motor.run_time(500, 4500, wait=False) # retract arm
+    wait(3500)
+    cutie.straight(1000) # return home
 
 def run3():
     """Execute the third robot run sequence.
@@ -416,15 +419,11 @@ def run4():
     """Execute the fourth robot run sequence.
     """
     cutie.settings(straight_speed=500, straight_acceleration=350)
-    left_motor.run_until_stalled(-1100)
     cutie.straight(650)
-    cutie.straight(-250)
-    cutie.straight(150)
-    left_motor.run_time(200, 5000, wait=False)
-    wait(1500)
-    cutie.straight(-400, then=Stop.NONE)
-    cutie.curve(-200, -60, then=Stop.NONE)
-    cutie.straight(-4000)
+    cutie.straight(-175)
+    left_motor.run_time(-5000, 1000)
+    left_motor.run_time(5000, 1000)
+    cutie.straight(-400)
 
 
 def victory_dance():
@@ -455,20 +454,50 @@ def cycle(iterable):
         except StopIteration:
             iterator = iter(iterable)
 
+print("Battery percent:", f"{check_battery_percent()}%")
 
 sensor.detectable_colors(run_colors)
-run_map = {str(i+1): func for i, func in enumerate([run1, run2, run3, run4])}
-color_map = {color: str(i + 1) for i, color in enumerate(run_colors)}
-
 color_cycle = cycle(run_colors)
+color_map = {Color.RED: "1", Color.BLUE: "2", Color.GREEN: "3", Color.YELLOW: "4"}
 
 while sensor.color() != next(color_cycle):
     pass
 
-menu = [color_map[current_color]] + [color_map[next(color_cycle)] for _ in range(len(run_colors) - 1)]
+menu = [color_map[sensor.color()]]
+for i in range(len(run_colors) - 1):
+    menu.append(color_map[next(color_cycle)])
+
+
 selected = hub_menu(*menu)  # pylint: disable=assignment-from-no-return
 
 hub.speaker.beep(659, 0.5)   # E5
-hub.imu.reset_heading(0)
+if selected == "1":
+    hub.imu.reset_heading(0)
+    run1()
+elif selected == "2":
+    hub.imu.reset_heading(0)
+    run2()
+elif selected == "3":
+    hub.imu.reset_heading(0)
+    run3()
+elif selected == "4":
+    hub.imu.reset_heading(0)
+    run4()
+# sensor.detectable_colors(run_colors)
+# run_map = {str(i+1): func for i, func in enumerate([run1, run2, run3, run4])}
+# color_map = {color: str(i + 1) for i, color in enumerate(run_colors)}
 
-run_map[selected]()
+# color_cycle = cycle(run_colors)
+
+# while sensor.color() != next(color_cycle):
+#     pass
+
+# current_color = sensor.color()
+
+# menu = [color_map[current_color]] + [color_map[next(color_cycle)] for _ in range(len(run_colors) - 1)]
+# selected = hub_menu(*menu)  # pylint: disable=assignment-from-no-return
+
+# hub.speaker.beep(659, 0.5)   # E5
+# hub.imu.reset_heading(0)
+
+# run_map[selected]()
