@@ -94,8 +94,8 @@ def till_black(speed, turn_rate):
     cutie.stop()  # Stop
 
 
-def till_yellow(speed, turn_rate):
-    """Drive until the yellow block on the ramp is detected on the color sensor.
+def till_blue(speed, turn_rate):
+    """Drive until the blue block on the ramp is detected on the color sensor.
     
     Args:
         speed (int): Speed at which to drive.
@@ -103,10 +103,18 @@ def till_yellow(speed, turn_rate):
     """
     cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
 
-    while sensor2.color() != CUSTOM_YELLOW:
+    while sensor2.color() != CUSTOM_BLUE:
         wait(10)
 
     cutie.stop()  # Stop
+
+# def test_roll():
+#     cutie.drive(-100, 0)
+#     print('---------------------')
+#     while (True):
+#         r = hub.imu.tilt()[1]
+#         print(r)
+#         wait(10)
 
 def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
     """Poll the robot till continuously and keep the last
@@ -146,7 +154,7 @@ def going_down(speed, turn_rate):
         speed (int): Speed at which to drive.
         turn_rate (float): Turn rate while driving.
     """
-    till_yellow(speed, turn_rate)
+    till_blue(speed, turn_rate)
 
     cutie.drive(speed, turn_rate)
     wait_for_stable_roll()
@@ -292,25 +300,24 @@ def run1():
     # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
     # straight_time(speed = 1000, time = 3000) #straight time
 
-    # cutie.settings(150, turn_rate=40)  # apply settings
-    # cutie.use_gyro(True)
+    cutie.settings(150, turn_rate=40)  # apply settings
+    cutie.use_gyro(True)
 
-    # # GOING DOWN
-    # cutie.settings(600)
-    # cutie.straight(-100) # speedy straight before controlled descent
-    # going_down(-100, 0)
-    # gyro_turn(0)
-    # cutie.settings(200)
-    # cutie.straight(-50)
-    # cutie.settings(300)
-    # cutie.curve(-450, -30)
-    # gyro_turn(0)
-    # cutie.settings(400)
-    # cutie.straight(-530)
-    # cutie.settings(turn_acceleration=200)
-    # cutie.use_gyro(False)
-    # cutie.settings(200, turn_rate=400)
-    cutie.turn(90)
+    # GOING DOWN
+    cutie.settings(600)
+    going_down(-100, 0)
+    gyro_turn(0)
+    cutie.settings(200)
+    cutie.straight(-50,then=Stop.NONE)
+    cutie.settings(300)
+    cutie.curve(-450, -30)
+    gyro_turn(0)
+    cutie.settings(550)
+    cutie.straight(-530)
+    cutie.settings(turn_acceleration=200)
+    cutie.use_gyro(False)
+    cutie.settings(200, turn_rate=400)
+    turn_to(90)
     left_motor.run_time(speed=-300, time=3000, wait=False)
     straight_time(-250, 1600)
     right_motor.run_time(speed=-300, time=3000, wait=False)
@@ -324,7 +331,7 @@ def run1():
     cutie.straight(-10)
     right_motor.run_time(300, 2000)
     right_motor.run_time(-300, 2000)
-    left_motor.run_time(2000, 2000)
+    left_motor.run_time(2000, 1000)
 
     cutie.settings(turn_rate=70, straight_speed=150)
     gyro_turn(0)
@@ -418,10 +425,11 @@ def run3():
 def run4():
     """Execute the fourth robot run sequence.
     """
-    cutie.settings(straight_speed=500, straight_acceleration=350)
+    cutie.settings(straight_speed=1000, straight_acceleration=350)
     cutie.straight(650)
-    cutie.straight(-175)
-    left_motor.run_time(-5000, 1000)
+    cutie.straight(-165)
+    wait(1000)
+    left_motor.run_time(-10000, 1000)
     left_motor.run_time(5000, 1000)
     cutie.straight(-400)
 
