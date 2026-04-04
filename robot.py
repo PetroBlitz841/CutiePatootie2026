@@ -297,29 +297,29 @@ def run1():
     """Execute the first robot run sequence.
     """
     # MERKAVA!!!!!
-    cutie.settings(straight_speed = 1000) #set speed to 1000
-    cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    straight_time(speed = 1000, time = 3000) #straight time
+    # cutie.settings(straight_speed = 1000) #set speed to 1000
+    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    # straight_time(speed = 1000, time = 3000) #straight time
 
-    cutie.settings(150, turn_rate=40)  # apply settings
-    cutie.use_gyro(True)
+    # cutie.settings(150, turn_rate=40)  # apply settings
+    # cutie.use_gyro(True)
 
-    # GOING DOWN
-    cutie.settings(600)
-    going_down(-100, 0)
-    gyro_turn(0)
-    cutie.settings(200)
-    cutie.straight(-50,then=Stop.NONE)
-    cutie.settings(300)
-    cutie.curve(-450, -30)
-    gyro_turn(0)
-    cutie.settings(400, 400)
-    cutie.straight(-550)
+    # # GOING DOWN
+    # cutie.settings(600)
+    # going_down(-100, 0)
+    # gyro_turn(0)
+    # cutie.settings(200)
+    # cutie.straight(-50,then=Stop.NONE)
+    # cutie.settings(300)
+    # cutie.curve(-450, -30)
+    # gyro_turn(0)
+    # cutie.settings(400, 400)
+    # cutie.straight(-550)
     cutie.settings(turn_acceleration=200)
     cutie.use_gyro(False)
     cutie.settings(200, turn_rate=400)
     turn_to(90)
-    left_motor.run_time(speed=-300, time=3000, wait=False)
+    left_motor.run_time(speed=300, time=3000, wait=False)
     straight_time(-250, 1600)
     right_motor.run_time(speed=-300, time=3000, wait=False)
     hub.imu.reset_heading(90)
@@ -332,23 +332,23 @@ def run1():
     cutie.straight(-10)
     right_motor.run_time(300, 2000)
     right_motor.run_time(-300, 2000)
-    left_motor.run_time(2000, 1000)
+    left_motor.run_angle(-1500, 200)
 
     cutie.settings(turn_rate=70, straight_speed=150)
     gyro_turn(0)
-    cutie.straight(-150)
-    right_motor.run_time(1000, 2000, wait=False)
-    left_motor.run_time(1000, 10000, wait=False)
-    wait(2000)
-    cutie.straight(120)
-    gyro_abs(0, 250, ke=25)
-    cutie.straight(-120)
-    cutie.straight(100)
-    cutie.turn(-30)
-    cutie.straight(50)
-    cutie.straight(-110)
+    cutie.straight(-140)
+    # right_motor.run_time(300, 2000)
+    # left_motor.run_time(-1500, 1000)
+    
     cutie.settings(straight_speed=400, turn_rate=200)
-    turn_to(-80)
+    gyro_turn(90)
+    cutie.straight(250)
+    gyro_turn(45)
+    left_motor.run_time(-1500, 1500)
+    cutie.straight(-150)
+    cutie.turn(15)
+    cutie.straight(300)
+    gyro_abs(-70)
     cutie.settings(1000, turn_rate=1000)
     cutie.curve(-700, -60, then=Stop.NONE)
     cutie.straight(-600)
@@ -376,7 +376,7 @@ def run2():
     cutie.straight(35) # drive away from crane
     gyro_turn(-90) 
     cutie.settings(200)
-    cutie.straight(80)
+    cutie.straight(90)
     gyro_turn(180) # go towards red home
     cutie.settings(150)
     cutie.straight(-150) # latch onto tray
@@ -385,14 +385,18 @@ def run2():
     cutie.straight(-60, then=Stop.NONE)
     cutie.curve(-60, 45, then=Stop.NONE)
     gyro_turn(180)
-    cutie.settings(300, 450)
-    cutie.straight(-560)
-    gyro_abs(45)
-    cutie.straight(-200) # reverse into market stall
+    cutie.settings(400, 500)
+    cutie.straight(-500)
+    cutie.settings(turn_rate=250)
+    turn_to(10)
+    cutie.settings(turn_rate=150)
+    gyro_abs(45, kp= 1)
+    straight_time(-180, 1400) # reverse into market stall
     left_motor.run_time(-500, 4500, wait=False)  # lower arm to lift stall
+    cutie.settings(50)
     cutie.straight(10) 
     wait(4000)
-    cutie.turn(-10)
+    cutie.settings(200)
     cutie.straight(200) # lift market stall
     cutie.straight(-80)
     left_motor.run_time(500, 4500, wait=False) # retract arm
