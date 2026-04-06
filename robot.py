@@ -297,24 +297,24 @@ def run1():
     """Execute the first robot run sequence.
     """
     # MERKAVA!!!!!
-    # cutie.settings(straight_speed = 1000) #set speed to 1000
-    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    # straight_time(speed = 1000, time = 3000) #straight time
+    cutie.settings(straight_speed = 1000) #set speed to 1000
+    cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    straight_time(speed = 1000, time = 3000) #straight time
 
-    # cutie.settings(150, turn_rate=40)  # apply settings
-    # cutie.use_gyro(True)
+    cutie.settings(150, turn_rate=40)  # apply settings
+    cutie.use_gyro(True)
 
-    # # GOING DOWN
-    # cutie.settings(600)
-    # going_down(-100, 0)
-    # gyro_turn(0)
-    # cutie.settings(200)
-    # cutie.straight(-50,then=Stop.NONE)
-    # cutie.settings(300)
-    # cutie.curve(-450, -30)
-    # gyro_turn(0)
-    # cutie.settings(400, 400)
-    # cutie.straight(-550)
+    # GOING DOWN
+    cutie.settings(600)
+    going_down(-100, 0)
+    gyro_turn(0)
+    cutie.settings(200)
+    cutie.straight(-50,then=Stop.NONE)
+    cutie.settings(300)
+    cutie.curve(-450, -30)
+    gyro_turn(0)
+    cutie.settings(400, 400)
+    cutie.straight(-550)
     cutie.settings(turn_acceleration=200)
     cutie.use_gyro(False)
     cutie.settings(200, turn_rate=400)
@@ -346,16 +346,18 @@ def run1():
     gyro_turn(45)
     left_motor.run_time(-1500, 1500)
     cutie.straight(-150)
-    cutie.turn(15)
-    cutie.straight(300)
-    gyro_abs(-70)
+    cutie.straight(100)
+    cutie.turn(30)
+    cutie.straight(50)
+    gyro_abs(80)
     cutie.settings(1000, turn_rate=1000)
-    cutie.curve(-700, -60, then=Stop.NONE)
-    cutie.straight(-600)
+    cutie.curve(700, 60, then=Stop.NONE)
+    cutie.straight(600)
     # yiftach was here, dont tell anyone
 def run2():
     """Execute the second robot run sequence.
-    # """
+    """
+    left_motor.run_angle(-500, 600, wait=False)
     curve_time(3000, 5)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
     cutie.settings(400) 
@@ -369,15 +371,17 @@ def run2():
     cutie.straight(75)
     gyro_abs(-85, ke=5, kp=1.25) #turn to mission
     till_black(-100,0) #go to misiion using black line
+    cutie.straight(10)
     turn_time(-30, 1000) #turn to gear while turning
     right_motor.run_time(-1000, 3100) #turn gear (lift up items)
     
     cutie.use_gyro(True)
     cutie.straight(35) # drive away from crane
     gyro_turn(-90) 
-    cutie.settings(200)
-    cutie.straight(90)
+    cutie.settings(120)
+    cutie.straight(67)
     gyro_turn(180) # go towards red home
+    left_motor.run_angle(500, 600, wait=False)
     cutie.settings(150)
     cutie.straight(-150) # latch onto tray
     cutie.straight(100) # latch onto tray
@@ -386,19 +390,19 @@ def run2():
     cutie.curve(-60, 45, then=Stop.NONE)
     gyro_turn(180)
     cutie.settings(400, 500)
-    cutie.straight(-500)
-    cutie.settings(turn_rate=250)
+    cutie.straight(-550)
+    cutie.settings(turn_rate=200)
     turn_to(10)
     cutie.settings(turn_rate=150)
-    gyro_abs(45, kp= 1)
-    straight_time(-180, 1400) # reverse into market stall
+    gyro_turn(45)
+    straight_time(-180, 1700) # reverse into market stall
     left_motor.run_time(-500, 4500, wait=False)  # lower arm to lift stall
     cutie.settings(50)
-    cutie.straight(10) 
+    cutie.straight(10)
     wait(4000)
     cutie.settings(200)
-    cutie.straight(200) # lift market stall
-    cutie.straight(-80)
+    cutie.straight(250) # lift market stall
+    cutie.straight(-130)
     left_motor.run_time(500, 4500, wait=False) # retract arm
     wait(3500)
     cutie.straight(1000) # return home
@@ -430,8 +434,8 @@ def run4():
     cutie.settings(straight_speed=1000, straight_acceleration=450)
     left_motor.run_time(10000, 1000, wait=False)
     cutie.straight(700)
-    cutie.straight(-165)
-    left_motor.run_time(-10000, 1000)
+    cutie.straight(-192)
+    left_motor.run_angle(-150, 330)
     cutie.settings(straight_speed=1000, straight_acceleration=10000)
     cutie.straight(-250,then=Stop.NONE)
     cutie.curve(-100, -45,then=Stop.NONE)
