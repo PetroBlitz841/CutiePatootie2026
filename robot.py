@@ -31,9 +31,14 @@ sensor2.detectable_colors(color_list)
 
 cutie.use_gyro(True)
 
-def battery():
-    return hub.battery.voltage()/82
-print(battery())
+def get_battery(amount):
+    avg = 0;
+    print("this will take" + amount / 20 + "seconds"
+    for i in range(amount):
+        avg += (hub.battery.voltage()-7000)/12
+        wait(0.05
+    return avg/amount
+print(get_battery(100)
 def wait_for_right_arrow():
     """Wait until the right arrow button is pressed on the hub."""
     while Button.RIGHT not in hub.buttons.pressed():
