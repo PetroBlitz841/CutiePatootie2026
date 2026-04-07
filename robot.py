@@ -31,11 +31,9 @@ sensor2.detectable_colors(color_list)
 
 cutie.use_gyro(True)
 
-def check_battery_percent():
-    v = hub.battery.voltage()  # Read battery voltage (mV)
-    percent = int((v - 7000) * 100 // 1200)  # Convert voltage to percentage
-    return percent
-
+def battery():
+    return hub.battery.voltage()/82
+print(battery())
 def wait_for_right_arrow():
     """Wait until the right arrow button is pressed on the hub."""
     while Button.RIGHT not in hub.buttons.pressed():
@@ -348,7 +346,7 @@ def run1():
     cutie.straight(-150)
     cutie.straight(100)
     cutie.turn(30)
-    cutie.straight(50)
+    cutie.straight(150)
     gyro_abs(80)
     cutie.settings(1000, turn_rate=1000)
     cutie.curve(700, 60, then=Stop.NONE)
@@ -358,10 +356,11 @@ def run2():
     """Execute the second robot run sequence.
     """
     left_motor.run_angle(-500, 600, wait=False)
+    cutie.settings(300)
     curve_time(3000, 5)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
     cutie.settings(400) 
-    cutie.straight(-450, then=Stop.NONE)  # go back
+    cutie.straight(-550, then=Stop.NONE)  # go back
     cutie.use_gyro(True)
     cutie.curve(500, -25, then=Stop.NONE)
     cutie.straight(450)
@@ -369,7 +368,7 @@ def run2():
     till_black(100, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
     cutie.straight(75)
-    gyro_abs(-85, ke=5, kp=1.25) #turn to mission
+    gyro_turn(-85, ke=5, kp=1.25) #turn to mission
     till_black(-100,0) #go to misiion using black line
     cutie.straight(10)
     turn_time(-30, 1000) #turn to gear while turning
@@ -388,7 +387,7 @@ def run2():
     cutie.turn(45) # remove tray
     cutie.straight(-60, then=Stop.NONE)
     cutie.curve(-60, 45, then=Stop.NONE)
-    gyro_turn(180)
+    gyro_turn(180, ke= 5)
     cutie.settings(400, 500)
     cutie.straight(-550)
     cutie.settings(turn_rate=200)
@@ -401,10 +400,11 @@ def run2():
     cutie.straight(10)
     wait(4000)
     cutie.settings(200)
-    cutie.straight(250) # lift market stall
+    cutie.straight(300) # lift market stall
     cutie.straight(-130)
     left_motor.run_time(500, 4500, wait=False) # retract arm
     wait(3500)
+    cutie.settings(1000)
     cutie.straight(1000) # return home
 
 def run3():
@@ -470,7 +470,7 @@ def cycle(iterable):
         except StopIteration:
             iterator = iter(iterable)
 
-print("Battery percent:", f"{check_battery_percent()}%")
+# print("Battery percent:", f"{check_battery_percent()}%")
 
 sensor.detectable_colors(run_colors)
 color_cycle = cycle(run_colors)
