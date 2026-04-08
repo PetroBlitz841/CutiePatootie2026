@@ -32,13 +32,15 @@ sensor2.detectable_colors(color_list)
 cutie.use_gyro(True)
 
 def get_battery(amount):
-    avg = 0;
-    print("this will take" + amount / 20 + "seconds"
+    """Return average of 'amount' battery precentege pollings"""
+    avg = 0
+    print(f"this will take {amount/20} seconds")
     for i in range(amount):
         avg += (hub.battery.voltage()-7000)/12
-        wait(0.05
+        wait(50)
     return avg/amount
-print(get_battery(100)
+
+
 def wait_for_right_arrow():
     """Wait until the right arrow button is pressed on the hub."""
     while Button.RIGHT not in hub.buttons.pressed():
@@ -317,12 +319,12 @@ def run1():
     cutie.curve(-450, -30)
     gyro_turn(0)
     cutie.settings(400, 400)
+    left_motor.run_time(speed=-300, time=6000, wait=False)
     cutie.straight(-550)
     cutie.settings(turn_acceleration=200)
     cutie.use_gyro(False)
     cutie.settings(200, turn_rate=400)
     turn_to(90)
-    left_motor.run_time(speed=300, time=3000, wait=False)
     straight_time(-250, 1600)
     right_motor.run_time(speed=-300, time=3000, wait=False)
     hub.imu.reset_heading(90)
@@ -335,7 +337,7 @@ def run1():
     cutie.straight(-10)
     right_motor.run_time(300, 2000)
     right_motor.run_time(-300, 2000)
-    left_motor.run_angle(-1500, 200)
+    left_motor.run_angle(1500, 300)
 
     cutie.settings(turn_rate=70, straight_speed=150)
     gyro_turn(0)
@@ -347,11 +349,13 @@ def run1():
     gyro_turn(90)
     cutie.straight(250)
     gyro_turn(45)
-    left_motor.run_time(-1500, 1500)
-    cutie.straight(-150)
-    cutie.straight(100)
-    cutie.turn(30)
-    cutie.straight(150)
+    cutie.straight(20)
+    left_motor.run_time(1500, 3500)
+    cutie.straight(-170)
+    cutie.straight(200)
+    cutie.settings(turn_rate=200)
+    cutie.turn(45)
+    cutie.straight(10)
     gyro_abs(80)
     cutie.settings(1000, turn_rate=1000)
     cutie.curve(700, 60, then=Stop.NONE)
@@ -361,26 +365,25 @@ def run2():
     """Execute the second robot run sequence.
     """
     left_motor.run_angle(-500, 600, wait=False)
-    cutie.settings(300)
-    curve_time(3000, 5)  # go into wall and into boat
+    cutie.settings(1000)
+    curve_time(1500, 5)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
     cutie.settings(400) 
     cutie.straight(-550, then=Stop.NONE)  # go back
     cutie.use_gyro(True)
     cutie.curve(500, -25, then=Stop.NONE)
-    cutie.straight(450)
+    cutie.straight(460)
     gyro_turn(0)
-    till_black(100, 0)  # go to black line
+    till_black(200, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
     cutie.straight(75)
-    gyro_turn(-85, ke=5, kp=1.25) #turn to mission
-    till_black(-100,0) #go to misiion using black line
-    cutie.straight(10)
+    gyro_turn(-85, ke=5, kp=1.5) #turn to mission
+    till_black(-200,0) #go to misiion using black line
     turn_time(-30, 1000) #turn to gear while turning
     right_motor.run_time(-1000, 3100) #turn gear (lift up items)
     
     cutie.use_gyro(True)
-    cutie.straight(35) # drive away from crane
+    cutie.straight(45) # drive away from crane
     gyro_turn(-90) 
     cutie.settings(120)
     cutie.straight(67)
@@ -392,9 +395,9 @@ def run2():
     cutie.turn(45) # remove tray
     cutie.straight(-60, then=Stop.NONE)
     cutie.curve(-60, 45, then=Stop.NONE)
-    gyro_turn(180, ke= 5)
-    cutie.settings(400, 500)
-    cutie.straight(-550)
+    gyro_turn(180, ke= 15)
+    cutie.settings(700, 500)
+    cutie.straight(-520)
     cutie.settings(turn_rate=200)
     turn_to(10)
     cutie.settings(turn_rate=150)
@@ -405,10 +408,10 @@ def run2():
     cutie.straight(10)
     wait(4000)
     cutie.settings(200)
+    left_motor.run_time(500, 4500, wait=False)
     cutie.straight(300) # lift market stall
     cutie.straight(-130)
-    left_motor.run_time(500, 4500, wait=False) # retract arm
-    wait(3500)
+     # retract arm
     cutie.settings(1000)
     cutie.straight(1000) # return home
 
@@ -421,12 +424,13 @@ def run3():
     cutie.settings(straight_speed=300)
     cutie.straight(440, then=Stop.NONE)
     till_black(speed=100, turn_rate=0)  # until black
-    gyro_abs(45, ke=5, kp=2)  # turn to degree 45
+    gyro_turn(47)
     cutie.settings(straight_speed=320, straight_acceleration=750, turn_rate=250)
     cutie.straight(300)  # go into statue
     cutie.straight(-25)
-    right_motor.run_time(speed=-5000, time=1000)  # statue
-    left_motor.run_time(speed=90, time=1500)  # forum, mechanical stop
+    right_motor.run_time(-5000, 1000)  # statue
+    left_motor.run_time(speed=200, time=700)  # forum, mechanical stop
+    right_motor.run_angle(5000, 110, wait=False)
     cutie.turn(-25)
     cutie.straight(-300)  # gets out
 
@@ -438,9 +442,9 @@ def run4():
     """
     cutie.settings(straight_speed=1000, straight_acceleration=450)
     left_motor.run_time(10000, 1000, wait=False)
-    cutie.straight(700)
-    cutie.straight(-192)
-    left_motor.run_angle(-150, 330)
+    cutie.straight(690)
+    cutie.straight(-180)
+    left_motor.run_angle(-2400, 500)
     cutie.settings(straight_speed=1000, straight_acceleration=10000)
     cutie.straight(-250,then=Stop.NONE)
     cutie.curve(-100, -45,then=Stop.NONE)
@@ -475,7 +479,14 @@ def cycle(iterable):
         except StopIteration:
             iterator = iter(iterable)
 
-# print("Battery percent:", f"{check_battery_percent()}%")
+# if (hub.system.info()[3]):
+#     print("yes")
+# else:
+#     print("no")
+#     cutie.turn(1000)
+# print("Polling battery percentage...")
+# battery = get_battery(100)
+# print(f"{battery}%")
 
 sensor.detectable_colors(run_colors)
 color_cycle = cycle(run_colors)
