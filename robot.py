@@ -34,10 +34,10 @@ cutie.use_gyro(True)
 def get_battery(amount):
     """Return average of 'amount' battery precentege pollings"""
     avg = 0
-    print(f"this will take {amount/20} seconds")
+    print(f"this will take {amount/50} seconds")
     for i in range(amount):
         avg += (hub.battery.voltage()-7000)/12
-        wait(50)
+        wait(20)
     return avg/amount
 
 
@@ -113,13 +113,6 @@ def till_blue(speed, turn_rate):
 
     cutie.stop()  # Stop
 
-# def test_roll():
-#     cutie.drive(-100, 0)
-#     print('---------------------')
-#     while (True):
-#         r = hub.imu.tilt()[1]
-#         print(r)
-#         wait(10)
 
 def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
     """Poll the robot till continuously and keep the last
@@ -285,19 +278,6 @@ def gyro_abs(target_angle, kp=1.5, ke=20):
     wait(200)
 
 
-# cheks for the turn of the robot PD vs P
-# timer = StopWatch()
-# timer.reset()
-# gyro_turn(90)
-# print(hub.imu.heading())
-# print(timer.time())
-# timer.reset()
-# gyro_abs(180)
-# print(hub.imu.heading())
-# print(timer.time())
-# till_black(100, 0)
-# left_motor.run_time(2000, 2000)
-# left_motor.run_time(-500, 4500)
 def run1():
     """Execute the first robot run sequence.
     """
@@ -325,7 +305,7 @@ def run1():
     cutie.use_gyro(False)
     cutie.settings(200, turn_rate=400)
     turn_to(90)
-    straight_time(-250, 1600)
+    straight_time(-250, 1600) #hit wall
     right_motor.run_time(speed=-300, time=3000, wait=False)
     hub.imu.reset_heading(90)
 
@@ -337,13 +317,11 @@ def run1():
     cutie.straight(-10)
     right_motor.run_time(300, 2000)
     right_motor.run_time(-300, 2000)
-    left_motor.run_angle(1500, 300)
+    left_motor.run_angle(1500, 300) #lift item
 
     cutie.settings(turn_rate=70, straight_speed=150)
     gyro_turn(0)
     cutie.straight(-140)
-    # right_motor.run_time(300, 2000)
-    # left_motor.run_time(-1500, 1000)
     
     cutie.settings(straight_speed=400, turn_rate=200)
     gyro_turn(90)
