@@ -31,21 +31,6 @@ sensor2.detectable_colors(color_list)
 
 cutie.use_gyro(True)
 
-def get_battery(amount):
-    """Return average of 'amount' battery precentege pollings"""
-    avg = 0
-    print(f"this will take {amount/50} seconds")
-    for i in range(amount):
-        avg += (hub.battery.voltage()-7000)/12
-        wait(20)
-    return avg/amount
-
-
-def wait_for_right_arrow():
-    """Wait until the right arrow button is pressed on the hub."""
-    while Button.RIGHT not in hub.buttons.pressed():
-        wait(100)
-
 
 def straight_time(speed, time):
     """Move straight for a specified duration.
@@ -54,34 +39,46 @@ def straight_time(speed, time):
         speed (int): Speed at which to move (positive or negative).
         time (int): Duration to move in milliseconds.
     """
-    cutie.drive(speed, 0)
-    wait(time)
+    timer = StopWatch()  # Start stopwatch
+    last = cutie.settings()[0]  # saves speed
+    cutie.settings(speed)  # define speed
+
+    while timer.time() < time:  # while timer not reached, go straight
+        if speed > 0:
+            cutie.straight(1000, wait=False)
+        else:
+            cutie.straight(-1000, wait=False)
     cutie.stop()
 
+    cutie.settings(last)  # return speed
 
-def turn_time(turn_rate, time):
-    """Turns the robot in place for a specified duration.
 
-    Args:
-        turn_rate (int): Turn rate to apply. Positive values turn right, negative values turn left.
-        time (int): Duration of the turn in milliseconds.
-    """
-    cutie.drive(0, turn_rate)
-    wait(time)
+def turn_time(speed, time):
+    timer = StopWatch() #Start stopwatch
+    last = cutie.settings()[2] #saves speed
+    cutie.settings(speed) #define speed
+
+    while timer.time() < time: 
+        if speed > 0:
+            cutie.turn(1000, wait=False)
+        else:
+            cutie.turn(-1000, wait=False)
     cutie.stop()
 
+    cutie.settings(last) 
 
-def curve_time(time, turn_rate):
+def curve_time(time, angle):
     """Drive in a curve for a specified duration.
     
     Args:
         time (int): Duration to drive in milliseconds.
         angle (float): Turn rate for the curve.
     """
-    speed = cutie.settings()[0]
-    cutie.drive(speed, turn_rate)
-    wait(time)
-    cutie.stop()
+    timer = StopWatch()  # Start stopwatch
+
+    while timer.time() < time:  # while time not reached, go curve
+        cutie.drive(speed=cutie.settings()[0], turn_rate=angle)
+    cutie.stop()  # cutie stops
 
 
 def till_black(speed, turn_rate):
@@ -94,34 +91,20 @@ def till_black(speed, turn_rate):
     cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
 
     while sensor2.reflection() > 7:  # while refelction over 7, continue driving
-        wait(10)
-
-    cutie.stop()  # Stop
-
-
-def till_blue(speed, turn_rate):
-    """Drive until the blue block on the ramp is detected on the color sensor.
-    
-    Args:
-        speed (int): Speed at which to drive.
-        turn_rate (float): Turn rate while driving.
-    """
-    cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
-
-    while sensor2.color() != CUSTOM_BLUE:
-        wait(10)
+        pass
 
     cutie.stop()  # Stop
 
 
 def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
-    """Poll the robot till continuously and keep the last
+    """Poll `hub.imu.tilt()[1]` continuously and keep the last
     `window_size` readings in a FIFO list. When the average of the
-    window is within the tolerance, return the averaged value.
+    window is within [-tol, tol], stop the robot (`cutie.stop()`) and
+    return the averaged value.
 
     Args:
         window_size (int): number of readings to keep (default 10).
-        poll_ms (int): milliseconds to wait between polls (default 10).
+        poll_ms (int): milliseconds to wait between polls (default 30).
         tol (float): tolerance threshold for average (default 1).
     Returns:
         float: the average of the last `window_size` readings when stopped.
@@ -137,9 +120,31 @@ def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
             avg = sum(readings) / float(window_size)
             # print("tilt_avg:", avg)
             if -tolerance <= avg <= tolerance:
+                cutie.stop()
                 return avg
 
-        wait(poll_ms)
+        wait(poll_ms50)
+
+
+def wait_for_right_arrow():
+    """Wait until the right arrow button is pressed on the hub."""
+    while Button.RIGHT not in hub.buttons.pressed():
+        wait(100)
+
+
+def till_yellow(speed, turn_rate):
+    """Drive until the yellow block on the merkava is detected on the color sensor.
+    
+    Args:
+        speed (int): Speed at which to drive.
+        turn_rate (float): Turn rate while driving.
+    """
+    cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
+
+    while sensor2.color() != CUSTOM_YELLOW:
+        pass
+
+    cutie.stop()  # Stop
 
 
 def going_down(speed, turn_rate):
@@ -152,21 +157,21 @@ def going_down(speed, turn_rate):
         speed (int): Speed at which to drive.
         turn_rate (float): Turn rate while driving.
     """
-    till_blue(speed, turn_rate)
-
+    till_yellow(speed, turn_rate)
+    print("yellow")
     cutie.drive(speed, turn_rate)
     wait_for_stable_roll()
-    cutie.stop()
+    print("roll 0")
 
 
 def gyro_turn(
     target,
-    max_rate=150,
-    kp=2.1,
+    max_rate=1000,
+    kp=5.0,
     kd=0.6,
-    ke=16,
+    ke=20,
     angle_tol=0.3,
-    speed_tol=30,
+    speed_tol=100,
     max_time=2670,
 ):
     """Turn the robot to a target heading using gyro-based PD control.
@@ -176,12 +181,12 @@ def gyro_turn(
     
     Args:
         target (float): Target heading in degrees.
-        max_rate (int): Maximum turn rate in degrees/second (default 150).
-        kp (float): Proportional gain constant.
-        kd (float): Derivative gain constant.
-        ke (int): Static bias constant to overcome motor friction.
+        max_rate (int): Maximum turn rate in degrees/second (default 1000).
+        kp (float): Proportional gain constant (default 5.0).
+        kd (float): Derivative gain constant (default 0.6).
+        ke (int): Static bias to overcome motor friction (default 20).
         angle_tol (float): Angle tolerance threshold in degrees (default 0.3).
-        speed_tol (int): Turn rate tolerance threshold (default 30).
+        speed_tol (int): Turn rate tolerance threshold (default 100).
         max_time (int): Maximum time to attempt turn in milliseconds (default 2670).
     """
 
@@ -208,11 +213,16 @@ def gyro_turn(
         # PD control
         d_error = (error - last_error) / dt
         turn_rate = kp * error + kd * d_error
+
         # Add static bias to overcome motor deadzone
-        turn_rate += ke if turn_rate > 0 else -ke
+        if turn_rate > 0:
+            turn_rate += ke
+        elif turn_rate < 0:
+            turn_rate -= ke
 
         # Clamp turn rate
         turn_rate = max(-max_rate, min(max_rate, turn_rate))
+
         cutie.drive(0, turn_rate)
 
         # Exit condition: close enough and slow enough
@@ -221,6 +231,7 @@ def gyro_turn(
 
         last_error = error
         wait(10)  # smaller wait for faster updates
+    print(timer.time())
     cutie.stop()
     wait(200)
 
@@ -277,121 +288,135 @@ def gyro_abs(target_angle, kp=1.5, ke=20):
     cutie.stop()  # stop
     wait(200)
 
+# right_motor.run_time(-1000, 5000)
+# cheks for the turn of the robot PD vs P
+# timer = StopWatch()
+# timer.reset()
+# gyro_turn(90)
+# print(hub.imu.heading())
+# print(timer.time())
+# timer.reset()
+# gyro_abs(180)
+# print(hub.imu.heading())
+# print(timer.time())
+
 
 def run1():
     """Execute the first robot run sequence.
     """
     # MERKAVA!!!!!
-    cutie.settings(straight_speed = 1000) #set speed to 1000
-    cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    straight_time(speed = 1000, time = 3000) #straight time
+    # cutie.settings(straight_speed = 1000) #set speed to 1000
+    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    # straight_time(speed = 1000, time = 3000) #straight time
 
-    cutie.settings(150, turn_rate=40)  # apply settings
-    cutie.use_gyro(True)
+    # cutie.settings(150, turn_rate=40)  # apply settings
+    # cutie.use_gyro(True)
 
     # GOING DOWN
     cutie.settings(600)
+    cutie.straight(-100) # speedy straight before controlled descent
     going_down(-100, 0)
     gyro_turn(0)
     cutie.settings(200)
-    cutie.straight(-50,then=Stop.NONE)
+    cutie.straight(-50)
     cutie.settings(300)
     cutie.curve(-450, -30)
     gyro_turn(0)
-    cutie.settings(400, 400)
-    left_motor.run_time(speed=-300, time=6000, wait=False)
-    cutie.straight(-550)
+    cutie.settings(400)
+    cutie.straight(-530)
     cutie.settings(turn_acceleration=200)
     cutie.use_gyro(False)
     cutie.settings(200, turn_rate=400)
-    turn_to(90)
-    straight_time(-250, 1600) #hit wall
-    right_motor.run_time(speed=-300, time=3000, wait=False)
+    cutie.turn(90)
+    left_motor.run_time(speed=-300, time=3000, wait=False)
+    right_motor.run_time(speed=300, time=3000, wait=False)
+    straight_time(-250, 1600)
     hub.imu.reset_heading(90)
 
     cutie.settings(turn_rate=70, straight_speed=80)
     cutie.straight(20)
-    gyro_turn(0)
+    gyro_turn(0, kp=3)
     cutie.use_gyro(True)
     till_black(100, 0)
     cutie.straight(-10)
-    right_motor.run_time(300, 2000)
+    left_motor.run_time(2000, 2000, wait=False)
     right_motor.run_time(-300, 2000)
-    left_motor.run_angle(1500, 300) #lift item
+    left_motor.run_time(2000, 500, wait=False)
+    left_motor.run_angle(100, 6)
 
     cutie.settings(turn_rate=70, straight_speed=150)
-    gyro_turn(0)
-    cutie.straight(-140)
-    
-    cutie.settings(straight_speed=400, turn_rate=200)
-    gyro_turn(90)
-    cutie.straight(250)
-    gyro_turn(45)
-    cutie.straight(20)
-    left_motor.run_time(1500, 3500)
+    gyro_turn(0, kp=2)
     cutie.straight(-170)
-    cutie.straight(200)
-    cutie.settings(turn_rate=200)
-    cutie.turn(45)
-    cutie.straight(10)
-    gyro_abs(80)
+    left_motor.run_time(1000, 5000, wait=False)
+    wait(2000)
+    cutie.straight(120)
+    gyro_abs(0, 250, ke=25)
+    cutie.straight(-120)
+    cutie.straight(80)
+    cutie.turn(-30)
+    cutie.straight(50)
+    cutie.straight(-110)
+    cutie.settings(straight_speed=400, turn_rate=200)
+    turn_to(-80)
     cutie.settings(1000, turn_rate=1000)
-    cutie.curve(700, 60, then=Stop.NONE)
-    cutie.straight(600)
+    cutie.curve(-700, -60, then=Stop.NONE)
+    cutie.straight(-600)
     # yiftach was here, dont tell anyone
+
+def new_run2():
+    cutie.straight(600)
+    right_motor.run_time(-1000, 1000)
+    cutie.straight(-100)
+    right_motor.run_time(1000, 1000)
+    straight_time(200, 2000)
+    cutie.straight(-300)
+    cutie.curve(400, -45)
+new_run2()
 def run2():
     """Execute the second robot run sequence.
     """
-    left_motor.run_angle(-500, 600, wait=False)
-    cutie.settings(1000)
-    curve_time(1500, 5)  # go into wall and into boat
+    curve_time(3000, 5)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
     cutie.settings(400) 
-    cutie.straight(-550, then=Stop.NONE)  # go back
+    cutie.straight(-450, then=Stop.NONE)  # go back
     cutie.use_gyro(True)
     cutie.curve(500, -25, then=Stop.NONE)
-    cutie.straight(460)
-    gyro_turn(0)
-    till_black(200, 0)  # go to black line
+    cutie.straight(450)
+    gyro_abs(0, ke=25)
+    cutie.straight(50)
+    till_black(100, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
-    cutie.straight(75)
-    gyro_turn(-85, ke=5, kp=1.5) #turn to mission
-    till_black(-200,0) #go to misiion using black line
-    turn_time(-30, 1000) #turn to gear while turning
-    right_motor.run_time(-1000, 3100) #turn gear (lift up items)
-    
+    cutie.straight(70)
+    gyro_abs(-90, ke=25) #turn to mission
+    till_black(-90, 0) #go to misiion using black line
+    cutie.straight(-40)
+    turn_time(-100, 300) #turn to gear
+    right_motor.run_time(-1000, 4000) #turn gear (lift up items)
     cutie.use_gyro(True)
-    cutie.straight(45) # drive away from crane
-    gyro_turn(-90) 
-    cutie.settings(120)
-    cutie.straight(67)
-    gyro_turn(180) # go towards red home
-    left_motor.run_angle(500, 600, wait=False)
-    cutie.settings(150)
-    cutie.straight(-150) # latch onto tray
-    cutie.straight(100) # latch onto tray
-    cutie.turn(45) # remove tray
-    cutie.straight(-60, then=Stop.NONE)
-    cutie.curve(-60, 45, then=Stop.NONE)
-    gyro_turn(180, ke= 15)
-    cutie.settings(700, 500)
-    cutie.straight(-520)
-    cutie.settings(turn_rate=200)
-    turn_to(10)
-    cutie.settings(turn_rate=150)
-    gyro_turn(45)
-    straight_time(-180, 1700) # reverse into market stall
-    left_motor.run_time(-500, 4500, wait=False)  # lower arm to lift stall
-    cutie.settings(50)
-    cutie.straight(10)
-    wait(4000)
+    gyro_abs(-90, ke=25) #fix up
     cutie.settings(200)
-    left_motor.run_time(500, 4500, wait=False)
-    cutie.straight(300) # lift market stall
-    cutie.straight(-130)
-     # retract arm
-    cutie.settings(1000)
-    cutie.straight(1000) # return home
+    # cutie.straight(30)
+    till_black(100, 0)
+    cutie.straight(100)
+    gyro_abs(0, ke=20)
+    till_black(-100, 0)
+    cutie.straight(195)
+    cutie.straight(-100)
+    cutie.settings(300)
+    cutie.turn(45)
+    cutie.straight(40, then=Stop.NONE)
+    cutie.curve(60, -45, then=Stop.NONE)
+    cutie.straight(510)
+    right_motor.run_time(-200, 2000, wait=False)
+    gyro_abs(45)
+    cutie.straight(-200)
+    right_motor.run_time(200, 3000, wait=False)
+    left_motor.run_time(1500, 3000)
+    cutie.straight(200)
+    cutie.straight(-50)
+    left_motor.run_time(-500, 2000)
+    cutie.straight(1000)
+
 
 def run3():
     """Execute the third robot run sequence.
@@ -402,13 +427,12 @@ def run3():
     cutie.settings(straight_speed=300)
     cutie.straight(440, then=Stop.NONE)
     till_black(speed=100, turn_rate=0)  # until black
-    gyro_turn(47)
+    gyro_abs(45, ke=5, kp=2)  # turn to degree 45
     cutie.settings(straight_speed=320, straight_acceleration=750, turn_rate=250)
     cutie.straight(300)  # go into statue
     cutie.straight(-25)
-    right_motor.run_time(-5000, 1000)  # statue
-    left_motor.run_time(speed=200, time=700)  # forum, mechanical stop
-    right_motor.run_angle(5000, 110, wait=False)
+    right_motor.run_time(speed=-5000, time=1000)  # statue
+    left_motor.run_time(speed=90, time=1500)  # forum, mechanical stop
     cutie.turn(-25)
     cutie.straight(-300)  # gets out
 
@@ -418,15 +442,16 @@ def run3():
 def run4():
     """Execute the fourth robot run sequence.
     """
-    cutie.settings(straight_speed=1000, straight_acceleration=450)
-    left_motor.run_time(10000, 1000, wait=False)
-    cutie.straight(690)
-    cutie.straight(-180)
-    left_motor.run_angle(-2400, 500)
-    cutie.settings(straight_speed=1000, straight_acceleration=10000)
-    cutie.straight(-250,then=Stop.NONE)
-    cutie.curve(-100, -45,then=Stop.NONE)
-    cutie.straight(-1000)
+    cutie.settings(straight_speed=500, straight_acceleration=350)
+    left_motor.run_until_stalled(-1100)
+    cutie.straight(650)
+    cutie.straight(-250)
+    cutie.straight(150)
+    left_motor.run_time(200, 5000, wait=False)
+    wait(1500)
+    cutie.straight(-400, then=Stop.NONE)
+    cutie.curve(-200, -60, then=Stop.NONE)
+    cutie.straight(-4000)
 
 
 def victory_dance():
@@ -441,6 +466,7 @@ def victory_dance():
         wait(100)
 
 
+# GetOut()
 def cycle(iterable):
     """Continuously cycle through an iterable, restarting when exhausted.
     
@@ -457,14 +483,6 @@ def cycle(iterable):
         except StopIteration:
             iterator = iter(iterable)
 
-# if (hub.system.info()[3]):
-#     print("yes")
-# else:
-#     print("no")
-#     cutie.turn(1000)
-# print("Polling battery percentage...")
-# battery = get_battery(100)
-# print(f"{battery}%")
 
 sensor.detectable_colors(run_colors)
 color_cycle = cycle(run_colors)
@@ -479,6 +497,28 @@ for i in range(len(run_colors) - 1):
 
 
 selected = hub_menu(*menu)  # pylint: disable=assignment-from-no-return
+def play_rick():
+    # --- "Never gonna give you up" ---
+    hub.speaker.beep(392, 1000) # Nev- (Bb4)
+    hub.speaker.beep(440, 1000) # er (C5)
+    wait(120)
+    hub.speaker.beep(294, 750) # gon- (F4) - Lower note here is key!
+    hub.speaker.beep(440, 1000) # na (C5)
+    wait(120)
+    hub.speaker.beep(494, 1000) # give (D5)
+    wait(300)
+
+    # --- "Never gonna let you down" ---
+    hub.speaker.beep(587, 200) # Nev-
+    hub.speaker.beep(523, 200) # er
+    hub.speaker.beep(494, 200) # gon-
+    hub.speaker.beep(440, 200) # na
+    hub.speaker.beep(392, 1000) # Nev- (Bb4)
+    hub.speaker.beep(440, 1000) # er (C5)
+    wait(120)
+    hub.speaker.beep(294, 2000) # gon- (F4) - Lower note here is key!
+
+# play_rick()
 
 hub.speaker.beep(659, 0.5)   # E5
 if selected == "1":
@@ -493,21 +533,3 @@ elif selected == "3":
 elif selected == "4":
     hub.imu.reset_heading(0)
     run4()
-# sensor.detectable_colors(run_colors)
-# run_map = {str(i+1): func for i, func in enumerate([run1, run2, run3, run4])}
-# color_map = {color: str(i + 1) for i, color in enumerate(run_colors)}
-
-# color_cycle = cycle(run_colors)
-
-# while sensor.color() != next(color_cycle):
-#     pass
-
-# current_color = sensor.color()
-
-# menu = [color_map[current_color]] + [color_map[next(color_cycle)] for _ in range(len(run_colors) - 1)]
-# selected = hub_menu(*menu)  # pylint: disable=assignment-from-no-return
-
-# hub.speaker.beep(659, 0.5)   # E5
-# hub.imu.reset_heading(0)
-
-# run_map[selected]()
