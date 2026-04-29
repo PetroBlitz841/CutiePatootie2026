@@ -364,13 +364,20 @@ def run1():
     # yiftach was here, dont tell anyone
 
 def new_run2():
-    cutie.straight(600)
+    cutie.straight(550)
     right_motor.run_time(-1000, 1000)
     cutie.straight(-100)
     right_motor.run_time(1000, 1000)
     straight_time(200, 2000)
-    cutie.straight(-300)
-    cutie.curve(400, -45)
+    gyro_turn(0)
+    cutie.straight(-200)
+    cutie.turn(-30)
+    cutie.curve(500, 30)
+    gyro_turn(0)
+
+    cutie.settings(1000)
+    cutie.straight(3000)
+    
 new_run2()
 def run2():
     """Execute the second robot run sequence.
