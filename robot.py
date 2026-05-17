@@ -300,129 +300,149 @@ def gyro_abs(target_angle, kp=1.5, ke=20):
 # print(hub.imu.heading())
 # print(timer.time())
 
-
 def run1():
     """Execute the first robot run sequence.
     """
     # MERKAVA!!!!!
     # cutie.settings(straight_speed = 1000) #set speed to 1000
     # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    # straight_time(speed = 1000, time = 3000) #straight time
+    # straight_time(speed = 1000, time = 4000) #straight time
 
     # cutie.settings(150, turn_rate=40)  # apply settings
     # cutie.use_gyro(True)
 
     # GOING DOWN
     cutie.settings(600)
-    cutie.straight(-100) # speedy straight before controlled descent
     going_down(-100, 0)
     gyro_turn(0)
     cutie.settings(200)
-    cutie.straight(-50)
+    cutie.straight(-50,then=Stop.NONE)
     cutie.settings(300)
     cutie.curve(-450, -30)
     gyro_turn(0)
-    cutie.settings(400)
-    cutie.straight(-530)
+    cutie.settings(400, 400)
+    left_motor.run_time(speed=-300, time=6000, wait=False)
+    cutie.straight(-550)
     cutie.settings(turn_acceleration=200)
     cutie.use_gyro(False)
     cutie.settings(200, turn_rate=400)
-    cutie.turn(90)
-    left_motor.run_time(speed=-300, time=3000, wait=False)
-    right_motor.run_time(speed=300, time=3000, wait=False)
-    straight_time(-250, 1600)
+    turn_to(90)
+    cutie.settings(straight_acceleration=750)
+    straight_time(-250, 2000) #hit wall
+    right_motor.run_time(speed=-300, time=3000, wait=False)
     hub.imu.reset_heading(90)
 
     cutie.settings(turn_rate=70, straight_speed=80)
-    cutie.straight(20)
-    gyro_turn(0, kp=3)
+    cutie.straight(30)
+    gyro_turn(0)
     cutie.use_gyro(True)
     till_black(100, 0)
     cutie.straight(-10)
-    left_motor.run_time(2000, 2000, wait=False)
+    right_motor.run_time(300, 2000)
     right_motor.run_time(-300, 2000)
-    left_motor.run_time(2000, 500, wait=False)
-    left_motor.run_angle(100, 6)
+    left_motor.run_angle(1500, 300) #lift item
 
     cutie.settings(turn_rate=70, straight_speed=150)
-    gyro_turn(0, kp=2)
-    cutie.straight(-170)
-    left_motor.run_time(1000, 5000, wait=False)
-    wait(2000)
-    cutie.straight(120)
-    gyro_abs(0, 250, ke=25)
-    cutie.straight(-120)
-    cutie.straight(80)
-    cutie.turn(-30)
-    cutie.straight(50)
-    cutie.straight(-110)
+    gyro_turn(0)
+    cutie.straight(-140)
+    
     cutie.settings(straight_speed=400, turn_rate=200)
-    turn_to(-80)
+    gyro_turn(90)
+    cutie.straight(250)
+    gyro_turn(45)
+    cutie.straight(20)
+    left_motor.run_time(1500, 3500)
+    cutie.settings(150)
+    cutie.straight(-170)
+    cutie.straight(100)
+    cutie.turn(10)
+    cutie.settings(400)
+    cutie.straight(100)
+    cutie.settings(turn_rate=200)
+    cutie.turn(45)
+    cutie.straight(10)
+    gyro_turn(100)
     cutie.settings(1000, turn_rate=1000)
-    cutie.curve(-700, -60, then=Stop.NONE)
-    cutie.straight(-600)
+    cutie.curve(700, 60, then=Stop.NONE)
+    cutie.straight(600)
     # yiftach was here, dont tell anyone
 
+
 def new_run2():
-    cutie.straight(550)
+    cutie.straight(600)
     right_motor.run_time(-1000, 1000)
     cutie.straight(-100)
     right_motor.run_time(1000, 1000)
     straight_time(200, 2000)
     gyro_turn(0)
-    cutie.straight(-200)
-    cutie.turn(-30)
-    cutie.curve(500, 30)
+    cutie.straight(-300)
+    cutie.curve(400, -45, then=Stop.NONE)
+    cutie.straight(20)
     gyro_turn(0)
+    till_black(100, 0)
+    right_motor.run_time(-1000, 10000, wait=False)
+    wait(1500)
+    cutie.settings(20)
+    cutie.straight(50)
+    wait(5000)
 
-    cutie.settings(1000)
-    cutie.straight(3000)
-    
-new_run2()
+
 def run2():
     """Execute the second robot run sequence.
     """
-    curve_time(3000, 5)  # go into wall and into boat
+    cutie.settings(1000)
+    curve_time(1500, 5)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
     cutie.settings(400) 
-    cutie.straight(-450, then=Stop.NONE)  # go back
+    cutie.straight(-550, then=Stop.NONE)  # go back
     cutie.use_gyro(True)
     cutie.curve(500, -25, then=Stop.NONE)
-    cutie.straight(450)
-    gyro_abs(0, ke=25)
-    cutie.straight(50)
-    till_black(100, 0)  # go to black line
+    cutie.straight(470)
+    gyro_turn(0)
+    till_black(150, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
-    cutie.straight(70)
-    gyro_abs(-90, ke=25) #turn to mission
-    till_black(-90, 0) #go to misiion using black line
-    cutie.straight(-40)
-    turn_time(-100, 300) #turn to gear
-    right_motor.run_time(-1000, 4000) #turn gear (lift up items)
+    cutie.straight(75)
+    gyro_turn(-85, ke=5, kp=1.5) #turn to mission
+    till_black(-200,0) #go to misiion using black line
+    cutie.settings(straight_speed=30)
+    cutie.straight(-20, wait=False)
+    turn_time(-30, 1000) #turn to gear while turning
+    right_motor.run_time(-1000, 3100) #turn gear (lift up items)
+    cutie.settings(straight_speed=100)
+    
     cutie.use_gyro(True)
-    gyro_abs(-90, ke=25) #fix up
+    cutie.straight(45) # drive away from crane
+    gyro_turn(-90) 
+    cutie.settings(120)
+    cutie.straight(67)
+    gyro_turn(180) # go towards red home
+    cutie.settings(150)
+    cutie.straight(-150) # latch onto tray
+    cutie.straight(100) # latch onto tray
+    cutie.turn(45) # remove tray
+    cutie.straight(-60, then=Stop.NONE)
+    cutie.curve(-60, 45, then=Stop.NONE)
+    gyro_turn(180, ke= 15)
+    cutie.settings(700, 500)
+    cutie.straight(-520)
+    cutie.settings(turn_rate=200)
+    turn_to(10)
+    cutie.settings(turn_rate=150)
+    gyro_turn(45)
+    cutie.settings(straight_acceleration=750)
+    straight_time(-180, 2500) # reverse into market stall
+    left_motor.run_time(-500, 4500, wait=False)  # lower arm to lift stall
+    cutie.settings(50)
+    cutie.straight(10)
+    wait(4000)
     cutie.settings(200)
-    # cutie.straight(30)
-    till_black(100, 0)
-    cutie.straight(100)
-    gyro_abs(0, ke=20)
-    till_black(-100, 0)
-    cutie.straight(195)
-    cutie.straight(-100)
-    cutie.settings(300)
-    cutie.turn(45)
-    cutie.straight(40, then=Stop.NONE)
-    cutie.curve(60, -45, then=Stop.NONE)
-    cutie.straight(510)
-    right_motor.run_time(-200, 2000, wait=False)
-    gyro_abs(45)
-    cutie.straight(-200)
-    right_motor.run_time(200, 3000, wait=False)
-    left_motor.run_time(1500, 3000)
-    cutie.straight(200)
-    cutie.straight(-50)
-    left_motor.run_time(-500, 2000)
-    cutie.straight(1000)
+    left_motor.run_time(500, 4500, wait=False)
+    cutie.straight(300) # lift market stall
+    cutie.straight(-130)
+     # retract arm
+    cutie.settings(1000)
+    cutie.straight(1000) # return home
+
 
 
 def run3():
@@ -445,7 +465,6 @@ def run3():
 
     # victory_dance()
 
-
 def run4():
     """Execute the fourth robot run sequence.
     """
@@ -459,7 +478,6 @@ def run4():
     cutie.straight(-400, then=Stop.NONE)
     cutie.curve(-200, -60, then=Stop.NONE)
     cutie.straight(-4000)
-
 
 def victory_dance():
     """Execute a victory dance after finishing all missions.
