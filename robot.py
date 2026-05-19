@@ -1,6 +1,6 @@
 from pybricks.hubs import PrimeHub
 from pybricks.pupdevices import Motor, ColorSensor
-from pybricks.parameters import Button, Color, Direction, Port, Stop
+from pybricks.parameters import Button, Color, Direction, Port, Stop, Axis
 from pybricks.robotics import DriveBase
 from pybricks.tools import StopWatch, hub_menu, wait
 
@@ -45,6 +45,34 @@ def wait_for_right_arrow():
     """Wait until the right arrow button is pressed on the hub."""
     while Button.RIGHT not in hub.buttons.pressed():
         wait(100)
+
+
+def button_motor_control(speed=300):
+    """Move the right or left motor while the corresponding button is held.
+
+    RIGHT arrow runs the right motor while pressed.
+    LEFT arrow runs the left motor while pressed.
+    CENTER exits the control loop.
+    """
+    while True:
+        pressed = hub.buttons.pressed()
+
+        if Button.RIGHT in pressed:
+            right_motor.run(speed)
+        else:
+            right_motor.stop()
+
+        if Button.LEFT in pressed:
+            left_motor.run(speed)
+        else:
+            left_motor.stop()
+
+        if Button.CENTER in pressed:
+            right_motor.stop()
+            left_motor.stop()
+            break
+
+        wait(10)
 
 
 def straight_time(speed, time):
@@ -140,7 +168,6 @@ def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
                 return avg
 
         wait(poll_ms)
-
 
 def going_down(speed, turn_rate):
     """Drive to the yellow line and wait for the robot to stabilize.
@@ -294,12 +321,12 @@ def run1():
     """Execute the first robot run sequence.
     """
     # MERKAVA!!!!!
-    cutie.settings(straight_speed = 1000) #set speed to 1000
-    cutie.straight(distance=1300, then=Stop.NONE) #Go straight
-    straight_time(speed = 1000, time = 4000) #straight time
+    # cutie.settings(straight_speed = 1000) #set speed to 1000
+    # cutie.straight(distance=1300, then=Stop.NONE) #Go straight
+    # straight_time(speed = 1000, time = 4000) #straight time
 
     cutie.settings(150, turn_rate=40)  # apply settings
-    cutie.use_gyro(True)
+    # cutie.use_gyro(True)
 
     # GOING DOWN
     cutie.settings(600)
@@ -333,7 +360,6 @@ def run1():
     left_motor.run_angle(1500, 300) #lift item
 
     cutie.settings(turn_rate=70, straight_speed=150)
-    gyro_turn(0)
     cutie.straight(-140)
     
     cutie.settings(straight_speed=400, turn_rate=200)
@@ -342,14 +368,16 @@ def run1():
     gyro_turn(45)
     cutie.straight(20)
     left_motor.run_time(1500, 3500)
+    hub.imu.reset_heading(45)
     cutie.settings(150)
     cutie.straight(-170)
-    cutie.straight(100)
+    cutie.straight(70)
     cutie.turn(10)
-    cutie.settings(400)
-    cutie.straight(100)
-    cutie.settings(turn_rate=200)
-    cutie.turn(45)
+    cutie.settings(100)
+    cutie.straight(130)
+    cutie.settings(turn_rate=375)
+    cutie.settings(turn_rate=1000)
+    cutie.turn(100)
     cutie.straight(10)
     gyro_turn(100)
     cutie.settings(1000, turn_rate=1000)
@@ -377,6 +405,8 @@ def new_run2():
     wait(5000)
 
 
+    
+
 def run2():
     """Execute the second robot run sequence.
     """
@@ -391,13 +421,14 @@ def run2():
     gyro_turn(0)
     till_black(150, 0)  # go to black line
     cutie.settings(straight_speed=100, turn_rate=80)
-    cutie.straight(75)
-    gyro_turn(-85, ke=5, kp=1.5) #turn to mission
-    till_black(-200,0) #go to misiion using black line
-    cutie.settings(straight_speed=30)
-    cutie.straight(-20, wait=False)
-    turn_time(-30, 1000) #turn to gear while turning
-    right_motor.run_time(-1000, 3100) #turn gear (lift up items)
+    turn_to(-60)
+    cutie.straight(120)
+    gyro_turn(-90, ke=5, kp=1.5) #turn to mission
+    cutie.settings(straight_speed=300)
+    cutie.straight(-100, then=Stop.NONE)
+    straight_time(-60, 1500)
+    turn_time(-30, 2000) #turn to gear while turning
+    right_motor.run_time(1000, 3100) #turn gear (lift up items)
     cutie.settings(straight_speed=100)
     
     cutie.use_gyro(True)
@@ -461,7 +492,7 @@ def run4():
     cutie.settings(straight_speed=500, straight_acceleration=350)
     left_motor.run_until_stalled(-1100)
     cutie.straight(650)
-    cutie.straight(-250)
+    cutie.straight(-290)
     cutie.straight(150)
     left_motor.run_time(200, 5000, wait=False)
     wait(1500)
