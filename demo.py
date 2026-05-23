@@ -83,7 +83,7 @@ def till_blue(speed, turn_rate):
     cutie.stop()  # Stop
 
 
-def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=2):
+def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
     """Poll the robot till continuously and keep the last
     `window_size` readings in a FIFO list. When the average of the
     window is within the tolerance, return the averaged value.
@@ -126,7 +126,6 @@ def going_down(speed, turn_rate):
     wait_for_stable_roll()
     cutie.stop()
 
-
 def button_motor_control(speed=400):
     """Move the right or left motor while the corresponding button is held.
 
@@ -156,10 +155,11 @@ def button_drive_control(speed=300):
     CENTER exits the control loop.
     """
     cutie.settings(200)
-    cutie.straight(-200, then=Stop.NONE) 
+    cutie.straight(-50)
     wait_for_stable_roll()
-
-    going_down(-70, 0)
+    cutie.drive(-100, 0)
+    
+    cutie.stop()
 
 menu = ['C', 'D']
 selected = hub_menu(*menu)  # pylint: disable=assignment-from-no-return
