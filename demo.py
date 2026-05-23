@@ -4,7 +4,6 @@ from pybricks.parameters import Button, Color, Direction, Port, Stop, Axis, Icon
 from pybricks.robotics import DriveBase
 from pybricks.tools import StopWatch, hub_menu, wait
 
-
 hub = PrimeHub()
 
 # CUTIE WHEELS
@@ -20,13 +19,71 @@ sensor2 = ColorSensor(Port.B)  # cyan
 
 cutie = DriveBase(left_wheel, right_wheel, wheel_diameter=62.4, axle_track=80)
 
+CUSTOM_RED = Color(343, 82, 36)
+CUSTOM_BLUE = Color(216, 88, 27)
+CUSTOM_GREEN = Color(156, 72, 19)
+CUSTOM_YELLOW = Color(51, 75, 71)
+
+color_list = [CUSTOM_RED, CUSTOM_YELLOW, CUSTOM_BLUE, CUSTOM_GREEN]
+
+run_colors = (Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN)
+sensor2.detectable_colors(color_list)
+
 cutie.use_gyro(True)
 
-CUSTOM_BLUE = Color(216, 88, 27)
+def get_battery(amount):
+    """Return average of 'amount' battery precentege pollings"""
+    avg = 0
+    print(f"this will take {amount/50} seconds")
+    for i in range(amount):
+        avg += (hub.battery.voltage()-7000)/12
+        wait(20)
+    return avg/amount
 
-color_list = [CUSTOM_BLUE]
-sensor2.detectable_colors(color_list)
-def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
+
+def button_motor_control(speed=300):
+    """Move the right or left motor while the corresponding button is held.
+
+    RIGHT arrow runs the right motor while pressed.
+    LEFT arrow runs the left motor while pressed.
+    CENTER exits the control loop.
+    """
+    while True:
+        pressed = hub.buttons.pressed()
+
+        if Button.RIGHT in pressed:
+            right_motor.run(speed)
+        else:
+            right_motor.stop()
+
+        if Button.LEFT in pressed:
+            left_motor.run(speed)
+        else:
+            left_motor.stop()
+
+        if Button.CENTER in pressed:
+            right_motor.stop()
+            left_motor.stop()
+            break
+
+        wait(10)
+
+def till_blue(speed, turn_rate):
+    """Drive until the blue block on the ramp is detected on the color sensor.
+    
+    Args:
+        speed (int): Speed at which to drive.
+        turn_rate (float): Turn rate while driving.
+    """
+    cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
+
+    while sensor2.color() != CUSTOM_BLUE:
+        wait(10)
+
+    cutie.stop()  # Stop
+
+
+def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=2):
     """Poll the robot till continuously and keep the last
     `window_size` readings in a FIFO list. When the average of the
     window is within the tolerance, return the averaged value.
@@ -70,21 +127,6 @@ def going_down(speed, turn_rate):
     cutie.stop()
 
 
-def till_blue(speed, turn_rate):
-    """Drive until the blue block on the ramp is detected on the color sensor.
-    
-    Args:
-        speed (int): Speed at which to drive.
-        turn_rate (float): Turn rate while driving.
-    """
-    cutie.drive(speed=speed, turn_rate=turn_rate)  # start driving
-
-    while sensor2.color() != CUSTOM_BLUE:
-        wait(10)
-
-    cutie.stop()  # Stop
-
-
 def button_motor_control(speed=400):
     """Move the right or left motor while the corresponding button is held.
 
@@ -113,8 +155,11 @@ def button_drive_control(speed=300):
     LEFT arrow drives backward while pressed.
     CENTER exits the control loop.
     """
-    cutie.settings(600)
-    going_down(-100, 0)
+    cutie.settings(200)
+    cutie.straight(-200, then=Stop.NONE) 
+    wait_for_stable_roll()
+
+    going_down(-70, 0)
 
 menu = ['C', 'D']
 selected = hub_menu(*menu)  # pylint: disable=assignment-from-no-return
