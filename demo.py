@@ -154,11 +154,8 @@ def button_drive_control(speed=300):
     LEFT arrow drives backward while pressed.
     CENTER exits the control loop.
     """
-    cutie.settings(200)
-    cutie.straight(-50)
-    wait_for_stable_roll()
-    cutie.drive(-100, 0)
-    
+    cutie.straight(170)
+    going_down(100, turn_rate=0)
     cutie.stop()
 
 menu = ['C', 'D']
