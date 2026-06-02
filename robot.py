@@ -350,7 +350,7 @@ def run1():
     hub.imu.reset_heading(90)
 
     cutie.settings(turn_rate=70, straight_speed=80)
-    cutie.straight(25)
+    cutie.straight(35)
     gyro_turn(0)
     cutie.use_gyro(True)
     till_black(100, 0)
@@ -405,10 +405,12 @@ def run2():
     gyro_turn(-90, ke=5, kp=2) #turn to mission
     cutie.settings(straight_speed=300)
     cutie.straight(-100, then=Stop.NONE)
-    straight_time(-60, 1000)
+    straight_time(-40, 2000)
+    cutie.settings(straight_speed=100)
+    cutie.straight(20)
     turn_time(-30, 2000) #turn to gear while turning
     right_motor.run_time(1000, 3100) #turn gear (lift up items)
-    cutie.settings(straight_speed=100)
+    
     
     cutie.use_gyro(True)
     cutie.straight(45) # drive away from crane
@@ -425,8 +427,8 @@ def run2():
     gyro_turn(180, ke= 15)
     gyro_turn(180)
     cutie.settings(700, 700)
-    cutie.straight(-400, then=Stop.NONE)
-    cutie.curve(-500, -45, then=Stop.NONE)
+    cutie.straight(-300, then=Stop.NONE)
+    cutie.curve(-400, -45, then=Stop.NONE)
     cutie.straight(-300)
     
 
@@ -435,7 +437,6 @@ def run2():
 def run3():
     """Execute the third robot run sequence.
     """
-    right_motor.run_time(100, 1500)  # run right motor for 5 seconds
     cutie.use_gyro(True)
     cutie.settings(straight_speed=1000)  #
     cutie.straight(distance=300, then=Stop.NONE)  # go straight
@@ -443,10 +444,12 @@ def run3():
     cutie.straight(440, then=Stop.NONE)
     till_black(speed=100, turn_rate=0)  # until black
     gyro_abs(45, ke=5, kp=2)  # turn to degree 45
-    cutie.settings(straight_speed=320, straight_acceleration=750, turn_rate=250)
-    cutie.straight(300)  # go into statue
-    cutie.straight(-25)
-    right_motor.run_time(speed=-5000, time=1000)  # statue
+    cutie.settings(straight_speed=200, straight_acceleration=750, turn_rate=250)
+    cutie.straight(250)  # go into statue
+    cutie.straight(-10)
+    right_motor.run_time(speed=-600, time=1000)  # statue
+    cutie.turn(50)
+    cutie.turn(-50)
     left_motor.run_time(speed=90, time=1500)  # forum, mechanical stop
     cutie.turn(-25)
     cutie.straight(-300)  # gets out
