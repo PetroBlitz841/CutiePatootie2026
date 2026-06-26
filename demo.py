@@ -158,7 +158,33 @@ def button_drive_control(speed=300):
     going_down(100, turn_rate=0)
     cutie.stop()
 
-menu = ['C', 'D']
+def cycle(iterable):
+    """Continuously cycle through an iterable, restarting when exhausted.
+    
+    Args:
+        iterable: An iterable to cycle through.
+        
+    Yields:
+        Elements from the iterable, repeating infinitely.
+    """
+    iterator = iter(iterable)
+    while True:
+        try:
+            yield next(iterator)
+        except StopIteration:
+            iterator = iter(iterable)
+
+sensor.detectable_colors(run_colors)
+color_map = {color: str(i + 1) for i, color in enumerate(run_colors)}
+
+color_cycle = cycle(run_colors)
+
+while sensor.color() != next(color_cycle):
+    pass
+
+current_color = sensor.color()
+
+menu = [color_map[current_color]] + [color_map[next(color_cycle)] for _ in range(len(run_colors) - 1)] + ['C', 'D']
 selected = hub_menu(*menu)  # pylint: disable=assignment-from-no-return
 
 hub.display.icon(Icon.HAPPY)
