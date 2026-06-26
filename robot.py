@@ -141,7 +141,6 @@ def till_blue(speed, turn_rate):
 
     cutie.stop()  # Stop
 
-
 def wait_for_stable_roll(window_size=10, poll_ms=10, tolerance=1):
     """Poll the robot till continuously and keep the last
     `window_size` readings in a FIFO list. When the average of the
@@ -339,7 +338,7 @@ def run1():
     gyro_turn(0)
     cutie.settings(400, 400)
     left_motor.run_time(speed=-300, time=6000, wait=False)
-    cutie.straight(-550)
+    cutie.straight(-500)
     cutie.settings(turn_acceleration=200)
     cutie.use_gyro(False)
     cutie.settings(200, turn_rate=400)
@@ -357,7 +356,7 @@ def run1():
     cutie.straight(-10)
     right_motor.run_time(300, 2000)
     right_motor.run_time(-300, 2000)
-    left_motor.run_angle(1500, 300) #lift item
+    left_motor.run_angle(1500, 600) #lift item
 
     cutie.settings(turn_rate=70, straight_speed=150)
     cutie.straight(-140)
@@ -367,7 +366,8 @@ def run1():
     cutie.straight(250)
     gyro_turn(45)
     cutie.straight(20)
-    left_motor.run_time(1500, 3500)
+    right_motor.run_time(300, 2000, wait=False)
+    left_motor.run_time(1500, 5000)
     hub.imu.reset_heading(45)
     cutie.settings(150)
     cutie.straight(-170)
@@ -376,8 +376,8 @@ def run1():
     cutie.settings(100)
     cutie.straight(130)
     cutie.settings(turn_rate=375)
-    cutie.settings(turn_rate=1000)
-    cutie.turn(100)
+    cutie.settings(turn_rate=1000, turn_acceleration=1000)
+    cutie.turn(-45)
     cutie.straight(10)
     gyro_turn(100)
     cutie.settings(1000, turn_rate=1000)
@@ -389,51 +389,58 @@ def run1():
 def run2():
     """Execute the second robot run sequence.
     """
-    cutie.settings(1000)
+    cutie.settings(500)
     curve_time(1600, 20)  # go into wall and into boat
     right_motor.run_time(-1000, 1000)  # Drop flag
     cutie.settings(400) 
     cutie.curve(-6000, 5)
     cutie.use_gyro(True)
     cutie.curve(500, -25, then=Stop.NONE)
-    cutie.straight(450)
-    gyro_turn(0, ke=5)
+    cutie.straight(400)
+    gyro_turn(0)
     cutie.straight(250)
     till_black(-150, 0)  # go to black line
     gyro_turn(0)
-    right_motor.run_time(1000, 3000, wait=False)
+    cutie.straight(20)
+    right_motor.run_time(1000, 3500, wait=False)
     wait(1000)
     straight_time(50, 2000)
     till_black(-100, 0)
-    right_motor.run_time(-1000, 3000, wait=False)
+
+    right_motor.run_time(-1000, 7000, wait=False)
+    cutie.turn(30)
     wait(1000)
     gyro_turn(0)
     cutie.settings(100)
-    cutie.straight(200) # latch onto tray
-    cutie.straight(-100) # latch onto tray
+    cutie.straight(160) # latch onto tray
+    cutie.straight(-120) # latch onto tray
+    cutie.settings(turn_rate=50)
     cutie.turn(45) # remove tray
+    turn_to(30)
+    cutie.settings(turn_rate=100)
     cutie.straight(60, then=Stop.NONE)
     cutie.curve(60, -45, then=Stop.NONE)
     gyro_turn(0, ke= 15)
     gyro_turn(0)
     
     cutie.settings(700, 500)
-    cutie.straight(520)
-    gyro_turn(45)
+    cutie.straight(530)
+    gyro_turn(52)
     cutie.settings(straight_acceleration=750)
     straight_time(-180, 2500) # reverse into market stall
     right_motor.run_time(1000, 3000, wait=False)
     left_motor.run_time(-500, 4500, wait=False)  # lower arm to lift stall
-    cutie.settings(50)
-    cutie.straight(10)
     wait(4000)
     cutie.settings(200)
-    left_motor.run_time(500, 4500, wait=False)
+    cutie.turn(-25)
+    gyro_turn(45)
+    left_motor.run_time(500, 5500, wait=False)
     cutie.straight(300) # lift market stall
     cutie.straight(-130)
-    wait(1000)
-     # retract arm
+    wait(3000)
+    # retract arm
     cutie.settings(1000)
+    right_motor.run_time(-1000, 3000, wait=False)
     cutie.straight(1000) # return home
     
 
@@ -467,8 +474,8 @@ def run4():
     """
     cutie.settings(straight_speed=800, straight_acceleration=450)
     left_motor.run_until_stalled(-1100)
-    cutie.straight(650)
-    cutie.straight(-290)
+    cutie.straight(700)
+    cutie.straight(-340)
     cutie.straight(150)
     left_motor.run_time(200, 5000, wait=False)
     wait(1500)
